@@ -1,0 +1,26 @@
+// (1.2) variables
+
+// dm sans google font source
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+
+// font family
+$dm: "DM Sans", sans-serif;
+
+// theme default
+$theme-font: $dm;
+$theme-bg: #ffffff;
+$theme-color: #181818;
+
+// colors
+$white: #ffffff;
+$black: #000000;
+$primary-color: #e74545;
+$secondary-color: #f7f7ff;
+$tertiary-color: #4569e7;
+
+// transitions
+$transition: all 0.4s ease-in-out;
+
+// box shadow
+$shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+$shadow-secondary: 0 0 31px rgba(0, 0, 0, 0.1);

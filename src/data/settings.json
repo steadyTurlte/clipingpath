@@ -1,0 +1,23 @@
+{
+  "site": {
+    "title": "Photodit - Clipping Path Service",
+    "description": "Professional photo editing services for e-commerce businesses and photographers.",
+    "logo": "/images/logo.png",
+    "logoLight": "/images/logo-light.png",
+    "favicon": "/images/favicon.ico"
+  },
+  "social": {
+    "facebook": "https://facebook.com/photodit",
+    "twitter": "https://twitter.com/photodit",
+    "instagram": "https://instagram.com/photodit",
+    "linkedin": "https://linkedin.com/company/photodit",
+    "youtube": "https://youtube.com"
+  },
+  "footer": {
+    "description": "Professional photo editing services for e-commerce businesses and photographers.",
+    "copyright": "© 2023 Photodit. All rights reserved."
+  },
+  "email": {
+    "adminEmail": "ahmadmunab22@gmail.com"
+  }
+}

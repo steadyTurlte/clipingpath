@@ -1,0 +1,387 @@
+/* ==== 
+ --------- (4.2) banner styles start ---------
+ ==== */
+
+.banner {
+  padding: 175px 0px 130px;
+  position: relative;
+  overflow-x: clip;
+  z-index: 1;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    max-height: 900px;
+    background: linear-gradient(
+      162.54deg,
+      rgba(231, 69, 69, 0.25) 11.73%,
+      rgba(69, 105, 231, 0.25) 30.8%,
+      rgba(228, 18, 241, 0.25) 50.44%,
+      rgba(101, 45, 232, 0.25) 71.34%,
+      rgba(6, 47, 234, 0.25) 88.04%
+    );
+    filter: blur(300px);
+    z-index: -1;
+  }
+
+  .banner__thumb {
+    position: relative;
+
+    .after {
+      position: absolute;
+      top: -60px;
+      right: -70px;
+      z-index: -1;
+      max-width: 100%;
+      animation: smaller 20s infinite linear;
+    }
+  }
+
+  .banner__small-thumb {
+    img {
+      position: absolute;
+      z-index: -1;
+    }
+    .one {
+      top: 50%;
+      right: 5vw;
+      transform: translateY(-50%);
+      max-width: 10vw;
+      min-width: 60px;
+      animation: smaller 20s infinite linear;
+    }
+
+    .two {
+      bottom: 25%;
+      right: 20vw;
+      max-width: 10vw;
+      min-width: 60px;
+      animation: smaller 20s infinite linear;
+    }
+
+    .three {
+      top: 33%;
+      left: 24vw;
+      transform: translateY(-30%);
+      max-width: 10vw;
+      min-width: 60px;
+      animation: smaller 20s infinite linear;
+      animation-direction: reverse;
+    }
+
+    .four {
+      bottom: 30%;
+      left: 5vw;
+      max-width: 10vw;
+      min-width: 60px;
+      animation: smaller 20s infinite linear;
+      animation-direction: alternate-reverse;
+    }
+  }
+}
+
+// banner two
+.banner-two {
+  padding: 312px 0px 132px;
+  background-color: #f8f6fa35;
+  background-image: url("../../../public/images/banner/banner-two-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left bottom;
+  position: relative;
+  overflow-x: clip;
+  z-index: 1;
+
+  .banner__content {
+    text-align: start;
+
+    .h1 {
+      span {
+        color: #2b1b9a;
+
+        &:nth-last-of-type(1) {
+          margin-left: 150px;
+        }
+      }
+    }
+  }
+
+  .price-tag {
+    padding: 10px 20px;
+    background-image: url("../../../public/images/services/frame.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    p {
+      text-transform: uppercase;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      color: $white;
+      span {
+        color: #e74545;
+      }
+    }
+  }
+
+  .cta__group {
+    a {
+      font-weight: 700;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: $tertiary-color;
+      i {
+        font-size: 60px;
+        color: $theme-color;
+        &::before {
+          line-height: 0px;
+        }
+      }
+
+      &:hover {
+        color: $theme-color;
+      }
+    }
+  }
+
+  .banner-two__small-thumb {
+    img {
+      position: absolute;
+      z-index: -1;
+    }
+
+    .one {
+      top: 30%;
+      right: 40%;
+      max-width: 17vw;
+      min-width: 70px;
+      animation: smaller 10s infinite linear;
+    }
+
+    .two {
+      left: 5%;
+      bottom: 27%;
+      max-width: 11vw;
+      min-width: 70px;
+      animation: smaller 30s infinite linear;
+    }
+  }
+}
+
+.banner-three {
+  padding: 120px 0px 0px;
+  position: relative;
+  z-index: 1;
+  overflow: clip;
+  background-image: url("../../../public/images/banner/banner-three-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right top 80%;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 10%;
+    right: 0%;
+    width: 300px;
+    height: 300px;
+    border: 1px solid $white;
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  .h1 {
+    text-transform: capitalize;
+  }
+  .banner-three__thumb {
+    p {
+      margin-top: 30px;
+      max-width: 380px;
+    }
+  }
+}
+
+.cmn-banner {
+  background-color: #f7f7ff;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+
+  .gaper {
+    row-gap: 16px;
+  }
+
+  .triangle {
+    position: relative;
+    background: #cdd8ff;
+    text-align: left;
+  }
+  .triangle:before,
+  .triangle:after {
+    content: "";
+    position: absolute;
+    background-color: inherit;
+  }
+  .triangle,
+  .triangle:before,
+  .triangle:after {
+    width: 60px;
+    height: 60px;
+    border-top-right-radius: 30%;
+  }
+
+  .triangle {
+    transform: rotate(-30deg) skewX(-30deg) scale(1, 0.866);
+  }
+  .triangle:before {
+    transform: rotate(-135deg) skewX(-45deg) scale(1.414, 0.707)
+      translate(0, -50%);
+  }
+  .triangle:after {
+    transform: rotate(135deg) skewY(-45deg) scale(0.707, 1.414) translate(50%);
+  }
+
+  .left-triangle {
+    position: absolute;
+    bottom: 25%;
+    left: 170px;
+    z-index: -1;
+    animation: smallMove 100s infinite linear;
+    &::before {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      background-color: rgba(255, 255, 255, 0.84);
+      border-radius: 50%;
+      bottom: -50%;
+      left: -60px;
+      z-index: 9;
+    }
+  }
+
+  .right-triangle {
+    position: absolute;
+    top: 20%;
+    right: 70px;
+    z-index: -1;
+    animation: smallMoveTwo 60s infinite linear;
+    animation-delay: 3s;
+    animation-direction: reverse;
+
+    .triangle {
+      position: relative;
+      background: #cdd8ff;
+      text-align: left;
+    }
+    .triangle:before,
+    .triangle:after {
+      content: "";
+      position: absolute;
+      background-color: inherit;
+    }
+    .triangle,
+    .triangle:before,
+    .triangle:after {
+      width: 30px;
+      height: 30px;
+      border-top-right-radius: 30%;
+    }
+
+    .triangle {
+      transform: rotate(45deg) skewX(-30deg) scale(1, 0.866);
+    }
+    .triangle:before {
+      transform: rotate(-135deg) skewX(-45deg) scale(1.414, 0.707)
+        translate(0, -50%);
+    }
+    .triangle:after {
+      transform: rotate(135deg) skewY(-45deg) scale(0.707, 1.414) translate(50%);
+    }
+
+    .right-alt {
+      position: relative;
+      background: white;
+      text-align: left;
+    }
+    .right-alt:before,
+    .right-alt:after {
+      content: "";
+      position: absolute;
+      background-color: inherit;
+    }
+    .right-alt,
+    .right-alt:before,
+    .right-alt:after {
+      width: 30px;
+      height: 30px;
+      border-top-right-radius: 30%;
+    }
+
+    .right-alt {
+      transform: rotate(45deg) skewX(-30deg) scale(1, 0.866);
+    }
+    .right-alt:before {
+      transform: rotate(-135deg) skewX(-45deg) scale(1.414, 0.707)
+        translate(0, -50%);
+    }
+    .right-alt:after {
+      transform: rotate(135deg) skewY(-45deg) scale(0.707, 1.414) translate(50%);
+    }
+  }
+}
+
+.cmn-banner--alt {
+  padding-bottom: 416px !important;
+}
+
+.breadcrumb {
+  margin: 0px;
+  padding: 0px;
+  .breadcrumb-item {
+    margin-top: 0px;
+    color: $white;
+    padding: 0px 0px 0px 24px;
+    position: relative;
+    padding-right: 16px;
+    a {
+      color: $theme-color;
+      font-weight: 500;
+      font-size: 16px;
+      &:hover {
+        color: $tertiary-color;
+      }
+    }
+    &::before {
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      content: "\f105";
+      position: absolute;
+      left: 0px;
+      font-size: 14px;
+      color: $theme-color;
+      padding: 0px;
+    }
+    &:first-of-type {
+      padding-left: 0px;
+      &::before {
+        content: none;
+      }
+    }
+  }
+  .active {
+    color: $theme-color;
+    padding-right: 0px;
+    font-weight: 600;
+  }
+}
+
+/* ==== 
+ --------- (4.2) banner styles end ---------
+ ==== */

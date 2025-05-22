@@ -1,0 +1,187 @@
+{
+  "banner": {
+    "title": "Portfolio",
+    "image": "/images/portfolio/1747417310952-brainless_israel.webp?t=1747417310961"
+  },
+  "categories": [
+    {
+      "id": 1,
+      "name": "All",
+      "filter": "*"
+    },
+    {
+      "id": 2,
+      "name": "Photo Retouch",
+      "filter": ".retouch"
+    },
+    {
+      "id": 3,
+      "name": "Background Remove",
+      "filter": ".background"
+    },
+    {
+      "id": 4,
+      "name": "Clipping Path",
+      "filter": ".path"
+    },
+    {
+      "id": 5,
+      "name": "Color Correction",
+      "filter": ".color"
+    },
+    {
+      "id": 6,
+      "name": "Drop Shadow",
+      "filter": ".drop"
+    },
+    {
+      "id": 7,
+      "name": "E-commerce Image",
+      "filter": ".ecommerce"
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "category": "retouch",
+      "beforeImage": "/images/portfolio/1747048506437-fb-cat.jpg",
+      "afterImage": "/images/portfolio/1747048506460-brainless_israel.webp",
+      "title": "Photo Retouch Example",
+      "description": "Professional photo retouching service"
+    },
+    {
+      "id": 2,
+      "category": "background",
+      "beforeImage": "/images/portfolio/1747048567888-fb-cat.jpg",
+      "afterImage": "/images/portfolio/1747048567930-pfp.jpg",
+      "title": "Background Removal Examples",
+      "description": "Clean background removal services"
+    },
+    {
+      "id": 3,
+      "category": "path",
+      "beforeImage": "/images/after/three-before.png",
+      "afterImage": "/images/after/three-after.png",
+      "title": "Clipping Path Example",
+      "description": "Precise clipping path service"
+    },
+    {
+      "id": 4,
+      "category": "color",
+      "beforeImage": "/images/after/four-before.png",
+      "afterImage": "/images/after/four-after.png",
+      "title": "Color Correction Example",
+      "description": "Professional color correction service"
+    },
+    {
+      "id": 5,
+      "category": "drop",
+      "beforeImage": "/images/after/one-before.png",
+      "afterImage": "/images/after/one-after.png",
+      "title": "Drop Shadow Example",
+      "description": "Natural drop shadow service"
+    },
+    {
+      "id": 6,
+      "category": "ecommerce",
+      "beforeImage": "/images/after/one-before.png",
+      "afterImage": "/images/after/one-after.png",
+      "title": "E-commerce Image Example",
+      "description": "E-commerce ready image editing"
+    }
+  ],
+  "video": {
+    "banner": {
+      "title": "Portfolio",
+      "image": "/images/portfolio/1747417310952-brainless_israel.webp?t=1747417310961"
+    },
+    "categories": [
+      {
+        "id": 1,
+        "name": "All",
+        "filter": "*"
+      },
+      {
+        "id": 2,
+        "name": "Photo Retouch",
+        "filter": ".retouch"
+      },
+      {
+        "id": 3,
+        "name": "Background Remove",
+        "filter": ".background"
+      },
+      {
+        "id": 4,
+        "name": "Clipping Path",
+        "filter": ".path"
+      },
+      {
+        "id": 5,
+        "name": "Color Correction",
+        "filter": ".color"
+      },
+      {
+        "id": 6,
+        "name": "Drop Shadow",
+        "filter": ".drop"
+      },
+      {
+        "id": 7,
+        "name": "E-commerce Image",
+        "filter": ".ecommerce"
+      }
+    ],
+    "items": [
+      {
+        "id": 1,
+        "category": "retouch",
+        "beforeImage": "/images/portfolio/1747048506437-fb-cat.jpg",
+        "afterImage": "/images/portfolio/1747048506460-brainless_israel.webp",
+        "title": "Photo Retouch Example",
+        "description": "Professional photo retouching service"
+      },
+      {
+        "id": 2,
+        "category": "background",
+        "beforeImage": "/images/portfolio/1747048567888-fb-cat.jpg",
+        "afterImage": "/images/portfolio/1747048567930-pfp.jpg",
+        "title": "Background Removal Examples",
+        "description": "Clean background removal services"
+      },
+      {
+        "id": 3,
+        "category": "path",
+        "beforeImage": "/images/after/three-before.png",
+        "afterImage": "/images/after/three-after.png",
+        "title": "Clipping Path Example",
+        "description": "Precise clipping path service"
+      },
+      {
+        "id": 4,
+        "category": "color",
+        "beforeImage": "/images/after/four-before.png",
+        "afterImage": "/images/after/four-after.png",
+        "title": "Color Correction Example",
+        "description": "Professional color correction service"
+      },
+      {
+        "id": 5,
+        "category": "drop",
+        "beforeImage": "/images/after/one-before.png",
+        "afterImage": "/images/after/one-after.png",
+        "title": "Drop Shadow Example",
+        "description": "Natural drop shadow service"
+      },
+      {
+        "id": 6,
+        "category": "ecommerce",
+        "beforeImage": "/images/after/one-before.png",
+        "afterImage": "/images/after/one-after.png",
+        "title": "E-commerce Image Example",
+        "description": "E-commerce ready image editing"
+      }
+    ],
+    "embedId": "NUgrrivQjig"
+  }
+}

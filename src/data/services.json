@@ -1,0 +1,116 @@
+{
+  "banner": {
+    "title": "Our Service",
+    "image": "/images/services/1747408528744-fb-cat.jpg?t=1747408528758"
+  },
+  "main": {
+    "subtitle": "our service",
+    "title": "We're Good at Best Clipping Path Services",
+    "description": "We provide high-quality photo editing services tailored to your specific needs. Our team of expert editors ensures that every image is processed with precision and care.s"
+  },
+  "services": [
+    {
+      "id": 3,
+      "title": "Image Masking",
+      "image": "/images/services/1747760208155-icons8-linkedin-48.png",
+      "price": "100 taka",
+      "description": "Perfect for complex edges like hair or fur, our image masking service preserves fine details while removing backgrounds.",
+      "link": "service-details",
+      "className": "tw"
+    },
+    {
+      "id": 4,
+      "title": "Shadow Creation",
+      "image": "/images/services/1747760200427-icons8-github-50.png",
+      "price": "200 taka",
+      "description": "We can add natural-looking shadows to your product images, creating depth and realism for a professional appearance.",
+      "link": "service-details",
+      "className": "th"
+    }
+  ],
+  "features": {
+    "subtitle": "our features",
+    "title": "Why Choose Our Services",
+    "items": [
+      {
+        "id": 1,
+        "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFpvQCZnYDRIESLA9C22b07XiGWF1ldL9AJg&s",
+        "title": "Precision Editings",
+        "description": "Our team of expert editors ensures pixel-perfect precision for every image."
+      },
+      {
+        "id": 2,
+        "icon": "icon-masking",
+        "title": "Quick Turnaround",
+        "description": "We deliver high-quality edits within 24 hours for standard orders."
+      },
+      {
+        "id": 3,
+        "icon": "icon-retouching",
+        "title": "Affordable Pricing",
+        "description": "Competitive rates starting at just $0.39 per image with volume discounts."
+      },
+      {
+        "id": 4,
+        "icon": "icon-shadow",
+        "title": "Dedicated Support",
+        "description": "Our customer service team is available 24/7 to assist with any questions."
+      }
+    ]
+  },
+  "testimonials": {
+    "subtitle": "testimonials",
+    "title": "What Our Clients Say",
+    "items": [
+      {
+        "id": 2,
+        "name": "Leslie Alexander",
+        "position": "Marketing Director",
+        "image": "/images/testimonial/1746872702338-admitpath.png",
+        "rating": 5,
+        "text": "I've been using Photodit for all my e-commerce product images, and the results have been outstanding. Their attention to detail and quick turnaround time have helped me improve my online store significantly."
+      },
+      {
+        "id": 3,
+        "name": "Jenny Wilson",
+        "position": "Product Manager",
+        "image": "/images/testimonial/1747760690830-Munab.jpg",
+        "rating": 5,
+        "text": "The team at Photodit has been instrumental in helping us maintain a consistent look across all our product images. Their clipping path service is precise and their customer service is excellent."
+      }
+    ]
+  },
+  "pricing": {
+    "subtitle": "pricing planss",
+    "title": "Choose the perfect plan for your needs",
+    "description": "We offer competitive pricing for our high-quality image editing services.",
+    "plans": [
+      {
+        "id": 1,
+        "name": "Basic",
+        "price": "100 Tajka",
+        "unit": "per image",
+        "description": "very good pricng for you!",
+        "features": [
+          "24/7 Support",
+          "Quick Delivery",
+          "100% Quality Guarantee"
+        ],
+        "recommended": true
+      },
+      {
+        "id": 3,
+        "name": "Premium",
+        "price": "$0.99",
+        "unit": "per image",
+        "description": "Best for professional photographers and large businesses",
+        "features": [
+          "Complex Clipping Path",
+          "Advanced Background Removal",
+          "Natural Shadow Creation"
+        ],
+        "recommended": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "banner": {
+    "title": "Pricing Plans",
+    "image": "/images/pricing/1747495105672-brainless_israel.webp?t=1747495105682"
+  },
+  "main": {
+    "subtitle": "pricing planss",
+    "title": "Choose the perfect plan for your needs",
+    "description": "We offer competitive pricing for our high-quality image editing services.",
+    "plans": [
+      {
+        "id": 1,
+        "name": "Basic",
+        "price": "100 Tajka",
+        "unit": "per image",
+        "description": "very good pricng for you!",
+        "features": [
+          "24/7 Support",
+          "Quick Delivery",
+          "100% Quality Guarantee"
+        ],
+        "recommended": true
+      },
+      {
+        "id": 3,
+        "name": "Premium",
+        "price": "$0.99",
+        "unit": "per image",
+        "description": "Best for professional photographers and large businesses",
+        "features": [
+          "Complex Clipping Path",
+          "Advanced Background Removal",
+          "Natural Shadow Creation"
+        ],
+        "recommended": false
+      }
+    ]
+  },
+  "project": {
+    "subtitle": "our projectss",
+    "title": "Check out our latest works",
+    "description": "See the quality of our image editing services through our recent projects.s",
+    "items": [
+      {
+        "id": 1,
+        "title": "Product Photographys",
+        "category": "E-commerce",
+        "image": "/images/project/1747495187262-brainless_israel.webp",
+        "link": "/portfolio"
+      },
+      {
+        "id": 2,
+        "title": "Fashion Photography",
+        "category": "Retouching",
+        "image": "/images/project/two.jpg",
+        "link": "/portfolio"
+      },
+      {
+        "id": 3,
+        "title": "Jewelry Photography",
+        "category": "Background Removalss",
+        "image": "/images/project/1747495194419-fb-cat.jpg",
+        "link": "/portfolio"
+      }
+    ]
+  },
+  "faq": {
+    "subtitle": "FAQ",
+    "title": "Frequently Asked Questions",
+    "description": "Find answers to common questions about our pricing and services.",
+    "items": [
+      {
+        "id": 1,
+        "question": "How does your pricing work?s",
+        "answer": "Our pricing is based on a per-image model. You can choose from our Basic, Standard, or Premium plans depending on your needs. We also offer volume discounts for larger orders.s"
+      },
+      {
+        "id": 2,
+        "question": "Do you offer discounts for bulk orders?",
+        "answer": "Yes, we offer volume discounts for bulk orders. The more images you need edited, the lower the per-image price will be. Contact us for a custom quote."
+      },
+      {
+        "id": 3,
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards, PayPal, and bank transfers. Payment is typically required before we begin work on your project."
+      },
+      {
+        "id": 4,
+        "question": "Is there a minimum order requirement?",
+        "answer": "No, there is no minimum order requirement. You can order as few as one image or as many as you need."
+      },
+      {
+        "id": 5,
+        "question": "Do you offer a money-back guarantee?",
+        "answer": "Yes, we offer a 100% satisfaction guarantee. If you are not satisfied with our work, we will revise it until you are happy or provide a full refund."
+      }
+    ]
+  }
+}

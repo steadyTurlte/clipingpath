@@ -1,0 +1,102 @@
+{
+  "news": [
+    {
+      "id": 1747743641671,
+      "title": "MOR than news",
+      "slug": "m",
+      "excerpt": "d as",
+      "content": "das dAA DA DaASD ASD ASsdasd asDa sdfwet df ad",
+      "image": "/images/news/1747743663040-minitzgo.jpg",
+      "category": "dasda",
+      "author": "d asd das",
+      "date": "2025-05-14",
+      "tags": [
+        "new"
+      ]
+    },
+    {
+      "id": 1747676660403,
+      "title": "AWd",
+      "slug": "aas d",
+      "excerpt": "34wad",
+      "content": "dasd asd asd asd",
+      "image": "/images/news/1747676692720-Screenshot-2025-05-03-213714.png",
+      "category": "dasda",
+      "author": "d asd das",
+      "date": "2025-05-19",
+      "tags": [
+        "technica",
+        "Handmade"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Shadow",
+      "slug": "shadow"
+    },
+    {
+      "id": 2,
+      "name": "Clipping Path",
+      "slug": "clipping-path"
+    },
+    {
+      "id": 3,
+      "name": "Background Removal",
+      "slug": "background-removal"
+    },
+    {
+      "id": 4,
+      "name": "Photo Retouching",
+      "slug": "photo-retouching"
+    }
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "name": "Vision Board",
+      "slug": "vision-board"
+    },
+    {
+      "id": 2,
+      "name": "Goals",
+      "slug": "goals"
+    },
+    {
+      "id": 3,
+      "name": "Motivation",
+      "slug": "motivation"
+    },
+    {
+      "id": 4,
+      "name": "Gifts",
+      "slug": "gifts"
+    },
+    {
+      "id": 5,
+      "name": "Personal Touch",
+      "slug": "personal-touch"
+    },
+    {
+      "id": 6,
+      "name": "Handmade",
+      "slug": "handmade"
+    },
+    {
+      "id": 7,
+      "name": "Photography",
+      "slug": "photography"
+    },
+    {
+      "id": 8,
+      "name": "Backdrop",
+      "slug": "backdrop"
+    },
+    {
+      "id": 9,
+      "name": "Tips",
+      "slug": "tips"
+    }
+  ]
+}
