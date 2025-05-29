@@ -226,6 +226,15 @@ const AboutMainEditor = () => {
               />
               {uploadingImage && <span className="admin-editor__uploading">Uploading...</span>}
             </div>
+
+            <div className="admin-editor__image-help">
+              <p className="admin-editor__help-text">
+                <strong>Recommended size:</strong> 600x400px
+              </p>
+              <p className="admin-editor__help-text">
+                <strong>Image types:</strong> JPEG, PNG, WEBP
+              </p>
+            </div>
           </div>
         </div>
       </div>

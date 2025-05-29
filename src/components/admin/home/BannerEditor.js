@@ -180,6 +180,14 @@ const BannerEditor = ({ data = {}, onChange, preview }) => {
             />
             {uploadingImage === 'main' && <span>Uploading...</span>}
           </div>
+          <div className="banner-editor__image-help">
+            <p className="banner-editor__help-text">
+              <strong>Recommended size:</strong> 1920x1080px
+            </p>
+            <p className="banner-editor__help-text">
+              <strong>Image types:</strong> JPEG, PNG, WEBP
+            </p>
+          </div>
         </div>
 
 
@@ -206,6 +214,14 @@ const BannerEditor = ({ data = {}, onChange, preview }) => {
                   className="form-control-file"
                 />
                 {uploadingImage === `smallImage${index}` && <span>Uploading...</span>}
+              </div>
+              <div className="banner-editor__image-help">
+                <p className="banner-editor__help-text">
+                  <strong>Recommended size:</strong> 400x400px
+                </p>
+                <p className="banner-editor__help-text">
+                  <strong>Image types:</strong> JPEG, PNG, WEBP
+                </p>
               </div>
             </div>
           ))}

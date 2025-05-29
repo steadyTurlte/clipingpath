@@ -221,7 +221,7 @@ const QuoteGalleryEditor = () => {
 
             <div className="admin-page__upload-section">
               <div className="admin-page__field">
-                <label className="admin-page__label">Upload Image (Recommended size: 200x150px)</label>
+                <label className="admin-page__label">Upload Image</label>
                 <div className="admin-page__file-upload">
                   <input
                     type="file"
@@ -233,6 +233,14 @@ const QuoteGalleryEditor = () => {
                   <label htmlFor="galleryImage" className="admin-page__file-label">
                     <i className="fa-solid fa-upload"></i> Choose Image
                   </label>
+                </div>
+                <div className="admin-page__image-help">
+                  <p className="admin-page__help-text">
+                    <strong>Recommended size:</strong> 400x300px
+                  </p>
+                  <p className="admin-page__help-text">
+                    <strong>Image types:</strong> JPEG, PNG, WEBP
+                  </p>
                 </div>
 
                 {imagePreview && (

@@ -456,6 +456,8 @@ const TeamMembersEditor = () => {
                             width={200}
                             height={200}
                             id={`member-${member.id}`}
+                            recommendedSize="300x300px (square)"
+                            imageTypes="JPEG, PNG, WEBP"
                           />
                         </div>
 

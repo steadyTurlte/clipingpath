@@ -296,7 +296,7 @@ const TrickyBackgroundsEditor = ({ data = {}, onChange, preview }) => {
                 />
               </div>
 
-              
+
 
               <div className="form-group">
                 <div className="before-after-header">
@@ -308,6 +308,15 @@ const TrickyBackgroundsEditor = ({ data = {}, onChange, preview }) => {
                   >
                     Add Image Pair
                   </button>
+                </div>
+
+                <div className="before-after-help">
+                  <p className="form-text">
+                    <strong>Recommended size:</strong> 600x400px (both before and after images)
+                  </p>
+                  <p className="form-text">
+                    <strong>Image types:</strong> JPEG, PNG, WEBP
+                  </p>
                 </div>
 
                 {category.beforeAfterImages.map((image, imageIndex) => (

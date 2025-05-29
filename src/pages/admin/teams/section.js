@@ -207,7 +207,7 @@ const TeamSectionEditor = () => {
             </div>
 
             <div className="admin-editor__field">
-              <label className="admin-editor__label">Large Image (1410x605px recommended)</label>
+              <label className="admin-editor__label">Large Image</label>
               <div className="admin-editor__file-upload">
                 <input
                   type="file"
@@ -219,8 +219,13 @@ const TeamSectionEditor = () => {
                 <label htmlFor="largeImage" className="admin-editor__file-label">
                   <i className="fa-solid fa-upload"></i> Choose Large Image
                 </label>
+              </div>
+              <div className="admin-editor__image-help">
                 <p className="admin-editor__help-text">
-                  For best results, use an image with dimensions 1410x605 pixels.
+                  <strong>Recommended size:</strong> 1410x605px
+                </p>
+                <p className="admin-editor__help-text">
+                  <strong>Image types:</strong> JPEG, PNG, WEBP
                 </p>
               </div>
 

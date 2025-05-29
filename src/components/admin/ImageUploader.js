@@ -12,7 +12,9 @@ const ImageUploader = ({
   className = '',
   imageClassName = '',
   allowUrl = true,
-  id = '' // Add an id prop to uniquely identify each uploader
+  id = '', // Add an id prop to uniquely identify each uploader
+  recommendedSize = '',
+  imageTypes = 'JPEG, PNG, GIF, WEBP'
 }) => {
   const [uploading, setUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState(currentImage || '');
@@ -180,6 +182,19 @@ const ImageUploader = ({
           </div>
         )}
       </div>
+
+      {(recommendedSize || imageTypes) && (
+        <div className="admin-page__image-help">
+          {recommendedSize && (
+            <p className="admin-page__help-text">
+              <strong>Recommended size:</strong> {recommendedSize}
+            </p>
+          )}
+          <p className="admin-page__help-text">
+            <strong>Image types:</strong> {imageTypes}
+          </p>
+        </div>
+      )}
 
       {error && <div className="admin-page__error-message">{error}</div>}
 

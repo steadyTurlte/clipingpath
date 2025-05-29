@@ -437,6 +437,14 @@ const PricingProjectsEditor = () => {
                     <i className="fa-solid fa-upload"></i> Choose Project Image
                   </label>
                 </div>
+                <div className="admin-page__image-help">
+                  <p className="admin-page__help-text">
+                    <strong>Recommended size:</strong> 600x400px
+                  </p>
+                  <p className="admin-page__help-text">
+                    <strong>Image types:</strong> JPEG, PNG, WEBP
+                  </p>
+                </div>
                 {projectImagePreview && (
                   <div className="admin-page__image-preview">
                     <Image

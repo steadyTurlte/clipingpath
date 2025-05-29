@@ -168,10 +168,10 @@ const AboutBannerEditor = () => {
                 label="Banner Image"
                 width={400}
                 height={200}
+                recommendedSize="1920x400px"
+                imageTypes="JPEG, PNG, WEBP"
               />
-              <p className="admin-editor__help-text">
-                Recommended image size: 1920x400 pixels. This image will appear as the background of the banner section.
-              </p>
+          
             </div>
           </div>
         </div>

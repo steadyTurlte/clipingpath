@@ -169,6 +169,15 @@ const AboutEditor = ({ data = {}, onChange, preview }) => {
           />
           {uploadingImage && <span>Uploading...</span>}
         </div>
+
+        <div className="about-editor__image-help">
+          <p className="form-text">
+            <strong>Recommended size:</strong> 600x400px
+          </p>
+          <p className="form-text">
+            <strong>Image types:</strong> JPEG, PNG, WEBP
+          </p>
+        </div>
       </div>
 
       <style jsx>{`

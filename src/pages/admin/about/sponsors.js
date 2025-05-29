@@ -239,6 +239,18 @@ const AboutSponsorsEditor = () => {
               </button>
             </div>
 
+            <div className="admin-editor__sponsors-help">
+              <p className="admin-editor__help-text">
+                <strong>Accepted formats:</strong> JPEG, PNG, GIF, WEBP, SVG (max 5MB)
+              </p>
+              <p className="admin-editor__help-text">
+                <strong>Recommended ratio:</strong> 3:2
+              </p>
+              <p className="admin-editor__help-text">
+                Sponsor logos should be transparent PNG files
+              </p>
+            </div>
+
             <div className="admin-editor__logos-grid">
               {sponsorsData.logos.map((logo, index) => (
                 <div key={index} className="admin-editor__logo-item">
@@ -251,8 +263,8 @@ const AboutSponsorsEditor = () => {
                     label={`Logo ${index + 1}`}
                     uploadOnSelect={false}
                     className="admin-editor__logo-uploader"
-                    imageRatio="3:2"
-                    helpText="Sponsor logos should be transparent PNG files"
+                    imageRatio=""
+                    helpText=""
                   />
                   <button
                     type="button"
@@ -390,6 +402,20 @@ const AboutSponsorsEditor = () => {
           margin-bottom: 16px;
           padding-bottom: 8px;
           border-bottom: 1px solid #e2e8f0;
+        }
+
+        .admin-editor__sponsors-help {
+          background-color: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+
+        .admin-editor__help-text {
+          margin: 4px 0;
+          font-size: 14px;
+          color: #64748b;
         }
 
         .admin-editor__field {

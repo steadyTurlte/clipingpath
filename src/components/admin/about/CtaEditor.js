@@ -10,7 +10,7 @@ const CtaEditor = ({ data = {}, onChange }) => {
 
   const handleChange = (field, value) => {
     if (!onChange) return;
-    
+
     onChange({
       ...editorData,
       [field]: value
@@ -19,24 +19,24 @@ const CtaEditor = ({ data = {}, onChange }) => {
 
   const handleImageUpload = async (e) => {
     if (!onChange) return;
-    
+
     const file = e.target.files[0];
     if (!file) return;
-    
+
     setUploadingImage(true);
-    
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('directory', 'images');
-    
+
     try {
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       });
-      
+
       const result = await response.json();
-      
+
       if (result.filePath) {
         onChange({
           ...editorData,
@@ -64,7 +64,7 @@ const CtaEditor = ({ data = {}, onChange }) => {
             className="form-control"
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
@@ -75,15 +75,15 @@ const CtaEditor = ({ data = {}, onChange }) => {
             rows={3}
           />
         </div>
-        
+
         <div className="form-group">
           <label>CTA Image</label>
           <div className="cta-image-preview">
-            <ImageWithFallback 
-              src={editorData.image} 
-              alt="CTA Image" 
-              width={400} 
-              height={300} 
+            <ImageWithFallback
+              src={editorData.image}
+              alt="CTA Image"
+              width={400}
+              height={300}
             />
           </div>
           <div className="cta-image-upload">
@@ -95,42 +95,50 @@ const CtaEditor = ({ data = {}, onChange }) => {
             />
             {uploadingImage && <span>Uploading...</span>}
           </div>
+          <div className="cta-image-help">
+            <p className="form-text">
+              <strong>Recommended size:</strong> 1920x600px
+            </p>
+            <p className="form-text">
+              <strong>Image types:</strong> JPEG, PNG, WEBP
+            </p>
+          </div>
         </div>
       </div>
-      
+
       <style jsx>{`
         .cta-editor {
           display: flex;
           flex-direction: column;
           gap: 24px;
         }
-        
+
         .cta-editor__form {
           display: flex;
           flex-direction: column;
           gap: 16px;
         }
-        
+
         .form-group {
           display: flex;
           flex-direction: column;
           gap: 8px;
           margin-bottom: 16px;
         }
-        
+
         .form-control {
           padding: 8px 12px;
           border: 1px solid #e2e8f0;
           border-radius: 4px;
           font-size: 14px;
         }
-        
+
         .form-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 16px;
         }
-        
+
         .cta-image-preview {
           background-color: #f8fafc;
           border: 1px solid #e2e8f0;
@@ -142,7 +150,7 @@ const CtaEditor = ({ data = {}, onChange }) => {
           min-height: 300px;
           margin-bottom: 8px;
         }
-        
+
         @media (max-width: 768px) {
           .form-row {
             grid-template-columns: 1fr;

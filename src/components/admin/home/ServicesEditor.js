@@ -319,6 +319,14 @@ const ServicesEditor = ({ data = {}, onChange, preview }) => {
                     className="form-control-file"
                   />
                   {uploadingImage === index && <span>Uploading...</span>}
+                  <div className="service-editor__icon-help">
+                    <p className="form-text">
+                      <strong>Recommended size:</strong> 64x64px
+                    </p>
+                    <p className="form-text">
+                      <strong>Image types:</strong> PNG, SVG (transparent background preferred)
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

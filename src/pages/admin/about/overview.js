@@ -231,6 +231,16 @@ const AboutOverviewEditor = () => {
 
           <div className="admin-editor__section">
             <h2 className="admin-editor__section-title">Overview Images</h2>
+
+            <div className="admin-editor__image-help">
+              <p className="admin-editor__help-text">
+                <strong>Recommended size:</strong> 400x300px
+              </p>
+              <p className="admin-editor__help-text">
+                <strong>Image types:</strong> JPEG, PNG, WEBP
+              </p>
+            </div>
+
             {overviewData.images.map((image, index) => (
               <div key={index} className="admin-editor__image-field">
                 <div className="admin-editor__field">

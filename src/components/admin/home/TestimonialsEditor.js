@@ -229,10 +229,17 @@ const TestimonialsEditor = ({ data = {}, onChange, preview }) => {
             />
             {uploadingImage === 'decorative' && <span>Uploading...</span>}
           </div>
-          <small className="form-text text-muted">
-            This image appears in the bottom left corner of the testimonials section.
-            Recommended size: 203x145 pixels.
-          </small>
+          <div className="testimonial-editor__image-help">
+            <p className="form-text">
+              <strong>Recommended size:</strong> 203x145px
+            </p>
+            <p className="form-text">
+              <strong>Image types:</strong> PNG, JPEG, WEBP
+            </p>
+            <small className="form-text text-muted">
+              This image appears in the bottom left corner of the testimonials section.
+            </small>
+          </div>
         </div>
 
         <div className="form-group">
@@ -315,6 +322,14 @@ const TestimonialsEditor = ({ data = {}, onChange, preview }) => {
                     className="form-control-file"
                   />
                   {uploadingImage === index && <span>Uploading...</span>}
+                </div>
+                <div className="testimonial-editor__image-help">
+                  <p className="form-text">
+                    <strong>Recommended size:</strong> 80x80px (square)
+                  </p>
+                  <p className="form-text">
+                    <strong>Image types:</strong> JPEG, PNG, WEBP
+                  </p>
                 </div>
               </div>
             </div>

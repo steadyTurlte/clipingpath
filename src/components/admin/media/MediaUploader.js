@@ -165,7 +165,10 @@ const MediaUploader = ({ onUploadComplete }) => {
               Drag and drop files here, or click to browse
             </p>
             <p className="media-uploader__subtext">
-              Supported formats: JPG, PNG, GIF, SVG
+              <strong>Recommended size:</strong> Up to 5MB per file
+            </p>
+            <p className="media-uploader__subtext">
+              <strong>Image types:</strong> JPEG, PNG, GIF, SVG, WEBP
             </p>
           </div>
         )}

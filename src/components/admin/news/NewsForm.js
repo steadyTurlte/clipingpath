@@ -223,6 +223,14 @@ const NewsForm = ({ news, onSave, onCancel }) => {
               />
               {uploadingImage && <span>Uploading...</span>}
             </div>
+            <div className="news-form__image-help">
+              <p className="form-text">
+                <strong>Recommended size:</strong> 800x600px
+              </p>
+              <p className="form-text">
+                <strong>Image types:</strong> JPEG, PNG, WEBP
+              </p>
+            </div>
           </div>
 
           <div className="form-group">
