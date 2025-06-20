@@ -1,0 +1,91 @@
+/* ==============
+ ========= css documentation =========
+
+ * theme name: Photodit
+ * version: 1.0
+ * description: Clipping Path Service Html Template
+ * author: Hugebinary
+ * author-url: https://themeforest.net/user/hugebinary
+
+ 01. abstracts
+     1.01 --> mixins
+     1.02 --> variables
+
+ 02. base
+     2.01 --> reset
+     2.02 --> typography
+     2.03 --> global
+
+ 03. components
+     3.01 --> buttons
+     3.02 --> forms
+     3.03 --> preloader
+
+ 04. layout
+     4.01 --> header
+     4.02 --> banner
+     4.03 --> footer
+
+ 05. sections
+     5.01 --> service
+     5.02 --> about section
+     5.03 --> work section
+     5.04 --> choose section
+     5.05 --> quality section
+     5.06 --> testimonial
+     5.07 --> pricing section
+     5.08 --> news
+     5.09 --> cta section
+     5.10 --> sponsor
+     5.11 --> counter
+     5.12 --> about two
+     5.13 --> service two
+     5.14 --> feature
+     5.15 --> free
+     5.16 --> testimonial
+     5.17 --> pricing two
+     5.18 --> faq
+     5.19 --> project
+     5.20 --> service three
+     5.21 --> quality three
+     5.22 --> project three
+     5.23 --> about overview
+     5.24 --> team
+     5.25 --> trial
+     5.26 --> pricing
+     5.27 --> recent project
+     5.28 --> quote
+     5.29 --> team main
+     5.30 --> contact
+     5.31 --> blog
+
+
+ 06. responsive
+
+    ==================================
+============== */
+
+// abstract styles
+@import "./abstracts/mixins";
+@import "./abstracts/variables";
+
+// base styles
+@import "./base/reset";
+@import "./base/typography";
+@import "./base/global";
+
+// component styles
+@import "./components/buttons";
+@import "./components/forms";
+@import "./components/preloader";
+
+// layout styles
+@import "./layout/header";
+@import "./layout/banner";
+@import "./layout/footer";
+
+// section styles
+@import "./sections/all-sections";
+
+// responsive styles
+@import "./responsive";

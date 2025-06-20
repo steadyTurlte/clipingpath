@@ -1,0 +1,100 @@
+{
+  "banner": {
+    "subtitle": "Welcome bhai",
+    "title": "Professional Photo Editing Service Hello!",
+    "images": {
+      "main": "/images/banner/1747934782852-Aspect_ratio_16_9_example.jpg",
+      "after": "/images/banner/after.png",
+      "smallImages": [
+        "/images/banner/1747933594535-pranerbangla.png",
+        "/images/banner/1747760074612-prokken_logo.jpg",
+        "/images/banner/1747760081369-admitpath.png",
+        "/images/banner/1747760086909-pranerbangla.png"
+      ]
+    }
+  },
+  "about": {
+    "subtitle": "About Us",
+    "title": "Professional Photo Editing Service",
+    "description": "We provide high-quality photo editing services for businesses and individuals.",
+    "additionalText": "Our team of experienced editors can handle any photo editing task.",
+    "priceTag": "Staring at 100 taka per image!",
+    "buttons": [
+      {
+        "text": "Get Started",
+        "link": "get-quote",
+        "type": "primary"
+      },
+      {
+        "text": "Learn More",
+        "link": "about",
+        "type": "secondary"
+      }
+    ],
+    "image": "/images/about/1747760251208-lena-denk-vO_RghTzvxE-unsplash.jpg"
+  },
+  "whySpecial": {
+    "subtitle": "why choose us",
+    "title": "why we are special",
+    "videoUrl": "https://www.youtube.com/watch?v=DHz-Q4GZ8CE",
+    "features": [
+      {
+        "id": 1,
+        "title": "Automatic & Quick Results",
+        "description": "Clipping Path Could be a process by which photo editor",
+        "icon": "/images/choose/1747760309432-icons8-github-50.png?t=1747760309434"
+      },
+      {
+        "id": 2,
+        "title": "Increase Resolution",
+        "description": "Clipping Path Could be a process by which photo editor",
+        "icon": "/images/choose/1747760317623-minitzgo.jpg?t=1747760317625"
+      },
+      {
+        "id": 3,
+        "title": "Retain Details",
+        "description": "Clipping Path Could be a process by which photo editor",
+        "icon": "/images/choose/icon-three.png"
+      }
+    ]
+  },
+  "trickyBackgrounds": {
+    "subtitle": "Stunning Quality",
+    "title": "We've removed these tricky backgrounds",
+    "categories": [
+      {
+        "id": 1747760380801,
+        "name": "Basic Editing",
+        "icon": "icon-image",
+        "beforeAfterImages": [
+          {
+            "before": "/images/after/1747760398785-lena-denk-vO_RghTzvxE-unsplash.jpg",
+            "after": "/images/after/1747760473119-Aspect_ratio_16_9_example.jpg"
+          }
+        ]
+      },
+      {
+        "id": 1747760520073,
+        "name": "Extreme editing",
+        "icon": "icon-image",
+        "beforeAfterImages": [
+          {
+            "before": "/images/after/1747760546808-Aspect_ratio_16_9_example.jpg",
+            "after": "/images/after/1747760551071-lena-denk-vO_RghTzvxE-unsplash.jpg"
+          }
+        ]
+      }
+    ],
+    "decorativeImages": {
+      "one": "/images/quality/thumb-one.png",
+      "two": "/images/quality/thumb-two.png"
+    },
+    "decorativeImage": "/images/after/decorative.png"
+  },
+  "cta": {
+    "subtitle": "Ready to Get Started?",
+    "title": "Transform Your Images Today",
+    "description": "Join thousands of satisfied customers who trust Photodit for their photo editing needs.",
+    "image": "/images/1747760774586-Aspect_ratio_16_9_example.jpg"
+  }
+}

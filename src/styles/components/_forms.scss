@@ -1,0 +1,163 @@
+/* ==== 
+ --------- (3.2) forms styles start ---------
+ ==== */
+
+.group-input {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #414141;
+  justify-content: space-between;
+  input,
+  textarea {
+    padding: 0px 20px 20px 0px;
+    color: $white;
+    background-color: transparent;
+    flex-grow: 1;
+    text-transform: capitalize;
+    width: calc(100% - 34px);
+    &::placeholder {
+      color: #818181;
+    }
+  }
+
+  i {
+    color: $white;
+  }
+}
+
+.group-radio {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  input {
+    appearance: none;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 1px solid #414141;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+
+    &::before {
+      content: " ";
+      position: absolute;
+      @include box(6px);
+      background-color: $tertiary-color;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
+
+    &:checked {
+      background-color: $tertiary-color;
+      &::before {
+        background-color: $white;
+      }
+    }
+  }
+
+  label {
+    color: #818181;
+    font-size: 14px;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+}
+
+.form-group-single {
+  margin-bottom: 20px;
+  label,
+  p {
+    margin-bottom: 10px;
+    text-transform: capitalize;
+  }
+
+  input,
+  textarea {
+    padding: 12px 20px;
+    background-color: #f8f8f8;
+    border: 1px solid rgba(217, 217, 217, 0.5);
+    border-radius: 5px;
+    width: 100%;
+    text-transform: capitalize;
+  }
+
+  textarea {
+    min-height: 130px;
+    max-height: 150px;
+  }
+}
+
+.form-group-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  row-gap: 20px;
+  margin-bottom: 20px;
+  .form-group-single {
+    width: calc(50% - 15px);
+    margin-bottom: 0px;
+  }
+}
+
+.drag {
+  margin-bottom: 20px;
+}
+
+.drag__content {
+  padding: 24px;
+  background-color: $white;
+  border: 1px dashed #a6a6a6;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  margin-bottom: 24px;
+
+  input {
+    position: absolute;
+    inset: 0px;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    cursor: pointer !important;
+  }
+
+  input[type="file"] {
+    cursor: pointer !important;
+    min-width: 100%;
+    min-height: 100%;
+    text-indent: -999px;
+  }
+
+  p {
+    text-transform: capitalize;
+    &:nth-of-type(1) {
+      font-weight: 500;
+    }
+
+    &:nth-of-type(2) {
+      color: #818181;
+    }
+
+    &:nth-of-type(3) {
+      color: $tertiary-color;
+    }
+  }
+  & + p {
+    color: #818181;
+  }
+}
+
+/* ==== 
+ --------- (3.2) forms styles end ---------
+ ==== */

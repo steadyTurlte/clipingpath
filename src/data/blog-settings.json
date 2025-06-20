@@ -1,0 +1,7 @@
+{
+  "pageTitle": "Blog",
+  "pageDescription": "Latest news and updates from our team",
+  "postsPerPage": 6,
+  "defaultThumbnail": "/images/blog/default-thumbnail.jpg",
+  "categories": ["Shadow", "Clipping Path", "Background Removal", "Photo Retouching"]
+}

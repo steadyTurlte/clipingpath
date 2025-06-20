@@ -1,0 +1,183 @@
+{
+  "banner": {
+    "title": "Get A Quote",
+    "image": ""
+  },
+  "hero": {
+    "subtitle": "get a quote",
+    "title": "Price Quotes At photodit",
+    "description": "Select multiple areas within your image so they can be edited separately. Put your images on any background color or setting"
+  },
+  "statistics": [
+    {
+      "id": 1,
+      "value": "90",
+      "symbol": "+",
+      "label": "Certified Professionals"
+    },
+    {
+      "id": 2,
+      "value": "80",
+      "symbol": "%",
+      "label": "Faster Delivery"
+    },
+    {
+      "id": 3,
+      "value": "85",
+      "symbol": "%",
+      "label": "Lower Cost"
+    }
+  ],
+  "gallery": {
+    "title": "Our Work Sampless",
+    "description": "Check out some examples of our photo editing work",
+    "images": [
+      {
+        "id": 1,
+        "src": "/images/images/gallery/1747508028446-brainless_israel.webp?t=1747508028549",
+        "alt": "Sample 1",
+        "category": "Clipping Path"
+      },
+      {
+        "id": 1747508043767,
+        "src": "/images/images/gallery/1747508047967-fb-cat.jpg?t=1747508048033",
+        "alt": "New Image",
+        "category": ""
+      },
+      {
+        "id": 1747508049715,
+        "src": "/images/images/gallery/1747508053160-488653355_980064964327963_5793665052018170713_n.jpg?t=1747508053190",
+        "alt": "New Image",
+        "category": ""
+      },
+      {
+        "id": 1747508053875,
+        "src": "/images/images/gallery/1747508061011-brainless_israel.webp?t=1747508061035",
+        "alt": "New Image",
+        "category": ""
+      },
+      {
+        "id": 1747508078112,
+        "src": "/images/images/gallery/1747508083116-488653355_980064964327963_5793665052018170713_n.jpg?t=1747508083155",
+        "alt": "New Image",
+        "category": ""
+      },
+      {
+        "id": 1747508093236,
+        "src": "/images/images/gallery/1747508113408-fb-cat.jpg?t=1747508113456",
+        "alt": "New Image",
+        "category": ""
+      }
+    ]
+  },
+  "form": {
+    "title": "Custom Quote Requestss",
+    "description": "Please provide as much detail as possible to help us understand your project requirements.",
+    "serviceSelection": {
+      "label": "Select Service*",
+      "title": "Our Services",
+      "options": [
+        "Clipping Path",
+        "Background Removal",
+        "Image Masking",
+        "Shadow Creation",
+        "Color Correction",
+        "Photo Retouching",
+        "Other"
+      ]
+    },
+    "outputOptions": {
+      "title": "Output File Options",
+      "fileFormat": [
+        {
+          "id": "jpg",
+          "label": "jpgss",
+          "isDefault": true
+        },
+        {
+          "id": "png",
+          "label": "png",
+          "isDefault": false
+        }
+      ],
+      "background": [
+        {
+          "id": "transparent",
+          "label": "Transparent",
+          "isDefault": true
+        },
+        {
+          "id": "white",
+          "label": "White",
+          "isDefault": false
+        }
+      ],
+      "path": [
+        {
+          "id": "includePath",
+          "label": "Include path",
+          "isDefault": true
+        },
+        {
+          "id": "noPath",
+          "label": "No path",
+          "isDefault": false
+        }
+      ]
+    },
+    "message": {
+      "id": "message",
+      "label": "Your Messagess",
+      "type": "textarea",
+      "placeholder": "Type Here",
+      "required": false
+    },
+    "fileUpload": {
+      "label": "Upload Files",
+      "description": "Drag & Drop Files Here or browse file",
+      "maxSize": "50 Mb",
+      "alternativeText": "If the size is more than 50 Mb, share your images via cloud (Google Drive, Dropbox)",
+      "linkPlaceholder": "Paste the link here"
+    },
+    "terms": {
+      "text": "I have read and agree to the Terms & Conditionsss",
+      "required": true
+    },
+    "submitButton": "Get a Quote",
+    "successMessage": "Your quote request has been submitted successfully. We'll get back to you within 24 hours.",
+    "errorMessage": "There was an error submitting your request. Please try again."
+  },
+  "instructions": {
+    "title": "Get a Quote Instructionsw",
+    "steps": [
+      {
+        "id": "01",
+        "title": "Choose services",
+        "description": "Choose which service you need. If none of the options fit what you're looking.",
+        "icon": "fa-list-check"
+      },
+      {
+        "id": "02",
+        "title": "Choose Output File Optionsss",
+        "description": "Choose which service you need. If none of the options fit what you're looking.",
+        "icon": "fa-file-export"
+      },
+      {
+        "id": "03",
+        "title": "Drag & Drop Files",
+        "description": "Choose which service you need. If none of the options fit what you're looking.",
+        "icon": "fa-cloud-upload-alt"
+      },
+      {
+        "id": "04",
+        "title": "Get a Quote",
+        "description": "Choose which service you need. If none of the options fit what you're looking.",
+        "icon": "fa-file-invoice-dollar"
+      }
+    ],
+    "cta": {
+      "title": "",
+      "description": ""
+    }
+  }
+}
