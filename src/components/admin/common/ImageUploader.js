@@ -1,394 +1,348 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
-import { deleteImage } from '../../../utils/imageUtils';
+import PropTypes from 'prop-types';
 
 /**
- * A reusable image uploader component
+ * A reusable image uploader component with preview and upload functionality
  * @param {Object} props - Component props
  * @param {string} props.currentImage - The current image URL
- * @param {Function} props.onImageUpload - Callback function when image is uploaded
- * @param {Function} props.onImageSelect - Callback function when image is selected but not yet uploaded
- * @param {string} props.folder - The folder to upload the image to (default: 'uploads')
- * @param {string} props.placeholderImage - The placeholder image URL
- * @param {string} props.label - The label for the uploader
- * @param {boolean} props.showPreview - Whether to show the image preview
- * @param {Object} props.previewStyle - Custom styles for the preview container
- * @param {boolean} props.uploadOnSelect - Whether to upload the image immediately on selection (default: false)
- * @param {string} props.imageRatio - Recommended image ratio (e.g., '16:9', '1:1')
- * @param {string} props.helpText - Additional help text to display
+ * @param {Function} props.onImageUpload - Callback when image is uploaded (receives URL and publicId)
+ * @param {string} [props.folder='uploads'] - The folder to upload to
+ * @param {string} [props.label='Upload Image'] - Label for the uploader
+ * @param {string} [props.className=''] - Additional CSS classes
+ * @param {string} [props.accept='image/*'] - Accepted file types
+ * @param {number} [props.maxSize=5] - Max file size in MB
+ * @param {string} [props.helpText=''] - Help text to display below the uploader
+ * @param {Object} [props.style={}] - Additional styles for the container
+ * @param {boolean} [props.required=false] - Whether the field is required
  */
-const ImageUploader = forwardRef(function ImageUploader({
-  currentImage,
+const ImageUploader = ({
+  currentImage = '',
   onImageUpload,
-  onImageSelect,
   folder = 'uploads',
-  placeholderImage = '/images/placeholder.png',
   label = 'Upload Image',
-  showPreview = true,
-  previewStyle = {},
   className = '',
-  uploadOnSelect = false,
-  imageRatio = '',
+  accept = 'image/*',
+  maxSize = 5, // in MB
   helpText = '',
-}, ref) {
+  style = {},
+  required = false
+}) => {
+  const [preview, setPreview] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [previewImage, setPreviewImage] = useState(currentImage || placeholderImage);
-  const [previousImage, setPreviousImage] = useState(currentImage || '');
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [error, setError] = useState('');
   const fileInputRef = useRef(null);
 
-  // Update previous image when currentImage changes
+  // Update preview when currentImage changes
   useEffect(() => {
-    setPreviousImage(currentImage || '');
-    setPreviewImage(currentImage || placeholderImage);
-  }, [currentImage, placeholderImage]);
-
-  // Generate a cache-busting URL to prevent browser caching
-  const getCacheBustedUrl = (url) => {
-    if (!url || url === placeholderImage) return url;
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}t=${new Date().getTime()}`;
-  };
-
-  // Helper function to clean image path for deletion
-  const cleanImagePath = (path) => {
-    if (!path || path === placeholderImage) return null;
-    // Remove any cache-busting parameters
-    const cleanPath = path.split('?')[0];
-    // Only return if it's a valid image path
-    if (cleanPath.startsWith('/images/')) {
-      return cleanPath;
+    if (currentImage) {
+      setPreview(currentImage);
     }
-    return null;
-  };
+  }, [currentImage]);
 
-  // Function to handle file selection
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Reset previous errors
+    setError('');
+
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
-    if (!validTypes.includes(file.type)) {
-      toast.error('Please select a valid image file (JPEG, PNG, GIF, WEBP, SVG)');
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
+      toast.error('Invalid file type');
       return;
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      toast.error('Image size should be less than 5MB');
+    // Validate file size
+    if (file.size > maxSize * 1024 * 1024) {
+      setError(`Image size should be less than ${maxSize}MB`);
+      toast.error(`File too large (max ${maxSize}MB)`);
       return;
     }
 
-    // Create a preview of the image
+    // Show preview
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreviewImage(e.target.result);
-    };
+    reader.onload = (e) => setPreview(e.target.result);
     reader.readAsDataURL(file);
 
-    // Store the selected file for later upload
-    setSelectedFile(file);
-
-    // If onImageSelect callback is provided, call it with the file
-    if (onImageSelect) {
-      onImageSelect(file);
+    // Upload the file
+    try {
+      await uploadFile(file);
+    } catch (err) {
+      console.error('Upload failed:', err);
+      setError('Failed to upload image. Please try again.');
+      toast.error('Upload failed');
     }
-
-    // We no longer upload immediately, even if uploadOnSelect is true
-    // This ensures images are only saved when the form is submitted
   };
 
-  // Function to upload the selected image
-  const uploadImage = useCallback(async (file) => {
-    if (!file) {
-      file = selectedFile;
-      if (!file) {
-        toast.error('No file selected');
-        return;
-      }
-    }
-
+  const uploadFile = async (file) => {
     setUploading(true);
-    setProgress(0);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
 
     try {
-      // Create a FormData object
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('directory', `images/${folder}`);
-
-      // Upload the image
-      const response = await fetch('/api/upload/image?folder=' + folder, {
+      const response = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to upload image');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Upload failed');
       }
 
       const data = await response.json();
-
-      // Delete the previous image if it exists and is different from the new one
-      const oldImagePath = cleanImagePath(previousImage);
-      if (oldImagePath && oldImagePath !== data.path) {
-        try {
-          await deleteImage(oldImagePath);
-          console.log('Previous image deleted:', oldImagePath);
-        } catch (deleteError) {
-          console.error('Error deleting previous image:', deleteError);
-          // Continue with the upload even if deletion fails
-        }
+      const imageUrl = data.path || data.url || data.secure_url;
+      
+      if (!imageUrl) {
+        throw new Error('No image URL returned from server');
       }
-
-      // Use the cache-busted path from the server if available
-      const imagePath = data.cacheBustedPath || data.path;
-      const newImagePath = getCacheBustedUrl(imagePath);
-      setPreviewImage(newImagePath);
-      setPreviousImage(data.path); // Store the clean path for deletion
-      setSelectedFile(null);
-
-      // Call the callback function with the new image path
+      
+      // Update preview with the final URL
+      setPreview(imageUrl);
+      
+      // Notify parent component
       if (onImageUpload) {
-        // Pass the clean path to the parent component
-        onImageUpload(data.path);
+        onImageUpload(imageUrl, data.public_id);
       }
-
+      
       toast.success('Image uploaded successfully');
-      return data.path;
+      return { url: imageUrl, publicId: data.public_id };
     } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(error.message || 'Failed to upload image');
-      // Reset the preview image if upload fails
-      setPreviewImage(currentImage || placeholderImage);
-      return null;
+      console.error('Upload error:', error);
+      setError(error.message || 'Failed to upload image');
+      toast.error(error.message || 'Upload failed');
+      throw error;
     } finally {
       setUploading(false);
-      setProgress(100);
-
-      // Reset the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-
-      // Reset progress after a delay
-      setTimeout(() => {
-        setProgress(0);
-      }, 1000);
-    }
-  }, [selectedFile, folder, previousImage, currentImage, placeholderImage, onImageUpload]);
-
-  // For backward compatibility, always use handleFileSelect
-  const handleImageUpload = (e) => {
-    handleFileSelect(e);
-  };
-
-  const handleBrowseClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
     }
   };
 
-  // Expose the uploadImage method for parent components
-  React.useImperativeHandle(
-    ref,
-    () => ({
-      uploadImage: () => uploadImage(selectedFile),
-      hasSelectedFile: () => !!selectedFile
-    }),
-    [selectedFile, uploadImage]
-  );
+  // Handle image load error
+  const handleImageError = (e) => {
+    console.error('Error loading image:', preview);
+    e.target.src = '/images/placeholder.png';
+  };
+
+  // Check if preview is a valid URL or data URL
+  const isValidImage = preview && 
+    (typeof preview === 'string') && 
+    (preview.startsWith('http') || preview.startsWith('data:image') || preview.startsWith('/'));
 
   return (
-    <div className={`image-uploader ${className}`}>
-      {showPreview && (
-        <div
-          className="image-uploader__preview"
-          style={previewStyle}
-          onClick={handleBrowseClick}
-        >
-          <Image
-            src={previewImage.startsWith('data:') ? previewImage : getCacheBustedUrl(previewImage)}
-            alt="Preview"
-            className="image-uploader__preview-img"
-            width={300}
-            height={150}
-            style={{ objectFit: "contain", maxWidth: "100%", maxHeight: "100%" }}
-            unoptimized={true}
-            onError={() => {
-              console.log('Image failed to load:', previewImage);
-              setPreviewImage(placeholderImage);
-            }}
-          />
-          {uploading && (
-            <div className="image-uploader__progress-overlay">
-              <div className="image-uploader__progress-bar" style={{ width: `${progress}%` }}></div>
-            </div>
-          )}
-          {selectedFile && !uploadOnSelect && (
-            <div className="image-uploader__selected-indicator">
-              <span>Image selected (not uploaded yet)</span>
-            </div>
-          )}
-        </div>
+    <div className={`image-uploader ${className}`} style={style}>
+      {label && (
+        <label className="image-uploader-label">
+          {label}
+          {required && <span className="required">*</span>}
+        </label>
       )}
-
-      <div className="image-uploader__controls">
-        <label className="image-uploader__label">{label}</label>
-        <div className="image-uploader__buttons">
-          <button
-            type="button"
-            className="image-uploader__browse-button"
-            onClick={handleBrowseClick}
-            disabled={uploading}
-          >
-            {uploading ? 'Uploading...' : 'Browse'}
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={uploadOnSelect ? handleImageUpload : handleFileSelect}
-            className="image-uploader__input"
-            accept="image/*"
-            disabled={uploading}
-          />
-
-          {/* Upload Now button removed - images are only uploaded when form is saved */}
-        </div>
-
-        {/* Help text and image requirements */}
-        <div className="image-uploader__help-text">
-          <p>Accepted formats: JPEG, PNG, GIF, WEBP, SVG (max 5MB)</p>
-          {imageRatio && <p>Recommended ratio: {imageRatio}</p>}
-          {helpText && <p>{helpText}</p>}
-        </div>
+      
+      <div 
+        className={`preview-container ${uploading ? 'uploading' : ''} ${error ? 'has-error' : ''}`} 
+        onClick={() => !uploading && fileInputRef.current?.click()}
+      >
+        {isValidImage ? (
+          <div className="image-wrapper">
+            <Image 
+              src={preview} 
+              alt="Preview" 
+              className="preview-image"
+              width={200}
+              height={150}
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '200px', 
+                objectFit: 'contain',
+                width: 'auto',
+                height: 'auto'
+              }}
+              onError={handleImageError}
+              unoptimized={preview.startsWith('blob:')}
+            />
+          </div>
+        ) : (
+          <div className="empty-preview">
+            <span>Click to upload image</span>
+          </div>
+        )}
+        
+        {uploading && (
+          <div className="uploading-overlay">
+            <div className="uploading-spinner"></div>
+            <span>Uploading...</span>
+          </div>
+        )}
+      </div>
+      
+      <div className="upload-controls">
+        <button 
+          type="button" 
+          onClick={(e) => {
+            e.stopPropagation();
+            fileInputRef.current?.click();
+          }}
+          disabled={uploading}
+          className="browse-button"
+        >
+          {uploading ? 'Uploading...' : 'Choose File'}
+        </button>
+        
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileSelect}
+          accept={accept}
+          style={{ display: 'none' }}
+          disabled={uploading}
+        />
+        
+        {error && <div className="error-message">{error}</div>}
+        {helpText && <div className="help-text">{helpText}</div>}
       </div>
 
       <style jsx>{`
         .image-uploader {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
+          margin: 10px 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-
-        .image-uploader__preview {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 150px;
-          background-color: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 4px;
-          overflow: hidden;
-          cursor: pointer;
-        }
-
-        .image-uploader__preview-img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-        }
-
-        .image-uploader__progress-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 4px;
-          background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .image-uploader__progress-bar {
-          height: 100%;
-          background-color: #4569e7;
-          transition: width 0.3s ease;
-        }
-
-        .image-uploader__selected-indicator {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          padding: 4px 8px;
-          background-color: rgba(0, 0, 0, 0.6);
-          color: white;
-          font-size: 12px;
-          text-align: center;
-        }
-
-        .image-uploader__controls {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .image-uploader__label {
-          font-size: 14px;
+        
+        .image-uploader-label {
+          display: block;
+          margin-bottom: 8px;
           font-weight: 500;
-          color: #64748b;
+          font-size: 14px;
+          color: #333;
         }
-
-        .image-uploader__buttons {
+        
+        .required {
+          color: #e53e3e;
+          margin-left: 4px;
+        }
+        
+        .preview-container {
+          width: 100%;
+          min-height: 150px;
+          max-height: 300px;
+          border: 2px dashed #ddd;
+          border-radius: 8px;
           display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          position: relative;
+          background: #f9f9f9;
+          cursor: pointer;
+          margin-bottom: 12px;
+          transition: all 0.2s ease;
+        }
+        
+        .preview-container:hover {
+          border-color: #bbb;
+        }
+        
+        .preview-container.uploading {
+          opacity: 0.7;
+          cursor: wait;
+        }
+        
+        .preview-container.has-error {
+          border-color: #e53e3e;
+        }
+        
+        .image-wrapper {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px;
+        }
+        
+        .empty-preview {
+          color: #666;
+          text-align: center;
+          padding: 20px;
+        }
+        
+        .uploading-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
           gap: 8px;
         }
-
-        .image-uploader__browse-button,
-        .image-uploader__upload-button {
-          padding: 6px 12px;
+        
+        .uploading-spinner {
+          width: 24px;
+          height: 24px;
+          border: 3px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          border-top-color: #fff;
+          animation: spin 1s ease-in-out infinite;
+        }
+        
+        .browse-button {
+          padding: 8px 16px;
+          background: #3182ce;
+          color: white;
           border: none;
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
           transition: background-color 0.2s;
         }
-
-        .image-uploader__browse-button {
-          background-color: #4569e7;
-          color: white;
+        
+        .browse-button:hover:not(:disabled) {
+          background: #2c5282;
         }
-
-        .image-uploader__upload-button {
-          background-color: #10b981;
-          color: white;
-        }
-
-        .image-uploader__browse-button:hover {
-          background-color: #3a5bc7;
-        }
-
-        .image-uploader__upload-button:hover {
-          background-color: #059669;
-        }
-
-        .image-uploader__browse-button:disabled,
-        .image-uploader__upload-button:disabled {
-          background-color: #94a3b8;
+        
+        .browse-button:disabled {
+          background: #a0aec0;
           cursor: not-allowed;
         }
-
-        .image-uploader__input {
-          display: none;
-        }
-
-        .image-uploader__help-text {
-          margin-top: 8px;
+        
+        .error-message {
+          color: #e53e3e;
           font-size: 12px;
-          color: #64748b;
+          margin-top: 6px;
         }
-
-        .image-uploader__help-text p {
-          margin: 4px 0;
+        
+        .help-text {
+          color: #718096;
+          font-size: 12px;
+          margin-top: 6px;
+        }
+        
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>
   );
-});
+};
+
+ImageUploader.propTypes = {
+  currentImage: PropTypes.string,
+  onImageUpload: PropTypes.func.isRequired,
+  folder: PropTypes.string,
+  label: PropTypes.string,
+  className: PropTypes.string,
+  accept: PropTypes.string,
+  maxSize: PropTypes.number,
+  helpText: PropTypes.string,
+  style: PropTypes.object,
+  required: PropTypes.bool
+};
 
 export default ImageUploader;

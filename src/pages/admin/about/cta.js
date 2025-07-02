@@ -3,18 +3,19 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
+import { toast } from 'react-toastify';
 
 const AboutCtaEditor = () => {
   const [ctaData, setCtaData] = useState({
     title: '',
     description: '',
-    image: ''
+    image: '',
+    imagePublicId: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -23,7 +24,24 @@ const AboutCtaEditor = () => {
       try {
         const response = await fetch('/api/content/about?section=cta');
         const data = await response.json();
-        setCtaData(data);
+        
+        // Handle both old and new data formats
+        if (data.image && typeof data.image === 'object') {
+          // New format with publicId
+          setCtaData({
+            ...data,
+            image: data.image.url || '',
+            imagePublicId: data.image.publicId || ''
+          });
+        } else {
+          // Old format or no image
+          setCtaData({
+            ...data,
+            image: data.image || '',
+            imagePublicId: data.imagePublicId || ''
+          });
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching CTA data:', error);
@@ -42,42 +60,12 @@ const AboutCtaEditor = () => {
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    setError(null);
-    setUploadSuccess(false);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/cta');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-      if (result.filePath) {
-        setCtaData({
-          ...ctaData,
-          image: result.filePath
-        });
-        setUploadSuccess(true);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(false);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(false);
-    }
+  const handleImageUpload = (imageUrl, publicId) => {
+    setCtaData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: publicId
+    }));
   };
 
   const handleSave = async () => {
@@ -86,12 +74,21 @@ const AboutCtaEditor = () => {
     setError(null);
 
     try {
+      // Prepare data with image object containing both URL and publicId
+      const dataToSave = {
+        ...ctaData,
+        image: {
+          url: ctaData.image,
+          publicId: ctaData.imagePublicId
+        }
+      };
+
       const response = await fetch('/api/content/about?section=cta', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(ctaData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
@@ -191,31 +188,18 @@ const AboutCtaEditor = () => {
 
             <div className="admin-editor__field">
               <label className="admin-editor__label">Background Image</label>
-
-              {ctaData.image && (
-                <div className="admin-editor__image-preview">
-                  <Image
-                    src={ctaData.image}
-                    alt="CTA Background"
-                    className="admin-editor__preview-img"
-                    width={400}
-                    height={200}
-                    style={{ objectFit: 'contain', maxHeight: '200px' }}
-                    unoptimized={true}
-                  />
-                </div>
-              )}
-
-              <div className="admin-editor__file-input">
-                <input
-                  type="file"
-                  accept="image/*"
+              
+              <div className="admin-editor__image-uploader-wrapper">
+                <ImageUploader
+                  value={ctaData.image}
                   onChange={handleImageUpload}
-                  className="admin-editor__input"
-                  disabled={uploadingImage}
+                  folder="about/cta"
+                  width={1920}
+                  height={600}
+                  className="admin-editor__image-uploader"
                 />
-                {uploadingImage && <span className="admin-editor__uploading">Uploading...</span>}
               </div>
+              
               <div className="admin-editor__image-help">
                 <p className="admin-editor__help-text">
                   <strong>Recommended size:</strong> 1920x600px
@@ -331,6 +315,14 @@ const AboutCtaEditor = () => {
 
         .admin-editor__success p::before {
           content: '✅ ';
+        }
+        
+        .admin-editor__image-uploader-wrapper {
+          margin-bottom: 16px;
+        }
+        
+        .admin-editor__image-uploader {
+          width: 100%;
         }
 
         .admin-editor__content {

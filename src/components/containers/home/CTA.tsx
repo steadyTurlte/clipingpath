@@ -14,7 +14,12 @@ interface CTAProps {
 }
 
 const CTA = ({ data }: CTAProps) => {
-  const ctaData = data;
+  // Defensive fallback for missing data or image
+  const ctaData = {
+    title: data?.title || "Ready to Get Started?",
+    description: data?.description || "Transform your images today!",
+    image: data?.image || undefined,
+  };
 
   return (
     <section className="try-cta bg-white">

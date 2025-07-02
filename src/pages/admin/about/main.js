@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { toast } from 'react-toastify';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const AboutMainEditor = () => {
   const [mainData, setMainData] = useState({
@@ -13,12 +14,12 @@ const AboutMainEditor = () => {
     additionalText: '',
     priceTag: '',
     image: '',
+    imagePublicId: '',
     buttons: []
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     // Fetch the main data when the component mounts
@@ -45,36 +46,21 @@ const AboutMainEditor = () => {
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/about');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.filePath) {
-        setMainData({
-          ...mainData,
-          image: result.filePath
-        });
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setUploadingImage(false);
-    }
+  // Extract public ID from a Cloudinary URL
+  const getPublicIdFromUrl = (url) => {
+    if (!url) return '';
+    // Extract public ID from Cloudinary URL format
+    const matches = url.match(/upload\/v\d+\/([^\/]+)\./);
+    return matches ? matches[1] : '';
   };
+
+  const handleImageUpload = useCallback((imageUrl) => {
+    setMainData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: getPublicIdFromUrl(imageUrl)
+    }));
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
@@ -205,35 +191,15 @@ const AboutMainEditor = () => {
 
           <div className="admin-editor__section">
             <h2 className="admin-editor__section-title">Main Image</h2>
-            <div className="admin-editor__image-preview">
-              {mainData.image && (
-                <Image
-                  src={mainData.image}
-                  alt="Main Image"
-                  width={300}
-                  height={200}
-                  className="admin-editor__preview-img"
-                  style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }}
-                />
-              )}
-            </div>
-            <div className="admin-editor__image-upload">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="admin-editor__file-input"
+            <div className="admin-editor__image-uploader">
+              <ImageUploader
+                currentImage={mainData.image}
+                onImageUpload={handleImageUpload}
+                folder="about/main"
+                label="Main Image"
+                recommendedSize="600x400px"
+                className="main-image-uploader"
               />
-              {uploadingImage && <span className="admin-editor__uploading">Uploading...</span>}
-            </div>
-
-            <div className="admin-editor__image-help">
-              <p className="admin-editor__help-text">
-                <strong>Recommended size:</strong> 600x400px
-              </p>
-              <p className="admin-editor__help-text">
-                <strong>Image types:</strong> JPEG, PNG, WEBP
-              </p>
             </div>
           </div>
         </div>

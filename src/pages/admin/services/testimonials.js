@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 import { toast } from 'react-toastify';
 
 const ServicesTestimonialsEditor = () => {
@@ -11,11 +12,10 @@ const ServicesTestimonialsEditor = () => {
     title: '',
     items: []
   });
+  const [imagePublicIds, setImagePublicIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(null);
   const [testimonialAdded, setTestimonialAdded] = useState(false);
   const [testimonialRemoved, setTestimonialRemoved] = useState(false);
   const [error, setError] = useState(null);
@@ -26,7 +26,34 @@ const ServicesTestimonialsEditor = () => {
       try {
         const response = await fetch('/api/content/services?section=testimonials');
         const data = await response.json();
-        setTestimonialsData(data);
+        
+        // Initialize image public IDs
+        if (data.items && data.items.length > 0) {
+          const initialPublicIds = data.items.map(item => {
+            if (item.image && typeof item.image === 'object') {
+              return item.image.publicId || '';
+            }
+            return '';
+          });
+          setImagePublicIds(initialPublicIds);
+          
+          // Convert items to use image URL directly for backward compatibility
+          const updatedItems = data.items.map(item => ({
+            ...item,
+            image: item.image && typeof item.image === 'object' ? item.image.url : item.image || ''
+          }));
+          
+          setTestimonialsData({
+            ...data,
+            items: updatedItems
+          });
+        } else {
+          setTestimonialsData({
+            ...data,
+            items: data.items || []
+          });
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching testimonials data:', error);
@@ -45,7 +72,7 @@ const ServicesTestimonialsEditor = () => {
     });
   };
 
-  const handleTestimonialChange = (index, field, value) => {
+  const handleTestimonialChange = (index, field, value, publicId = null) => {
     const updatedItems = [...testimonialsData.items];
     updatedItems[index] = {
       ...updatedItems[index],
@@ -56,6 +83,13 @@ const ServicesTestimonialsEditor = () => {
       ...testimonialsData,
       items: updatedItems
     });
+    
+    // Update public ID if provided
+    if (publicId !== null && field === 'image') {
+      const updatedPublicIds = [...imagePublicIds];
+      updatedPublicIds[index] = publicId;
+      setImagePublicIds(updatedPublicIds);
+    }
   };
 
   const handleAddTestimonial = () => {
@@ -73,6 +107,9 @@ const ServicesTestimonialsEditor = () => {
         }
       ]
     });
+    
+    // Add an empty public ID for the new testimonial
+    setImagePublicIds([...imagePublicIds, '']);
 
     setTestimonialAdded(true);
 
@@ -85,11 +122,16 @@ const ServicesTestimonialsEditor = () => {
   const handleRemoveTestimonial = (index) => {
     const updatedItems = [...testimonialsData.items];
     updatedItems.splice(index, 1);
+    
+    const updatedPublicIds = [...imagePublicIds];
+    updatedPublicIds.splice(index, 1);
 
     setTestimonialsData({
       ...testimonialsData,
       items: updatedItems
     });
+    
+    setImagePublicIds(updatedPublicIds);
 
     setTestimonialRemoved(true);
 
@@ -99,41 +141,8 @@ const ServicesTestimonialsEditor = () => {
     }, 3000);
   };
 
-  const handleImageUpload = async (index, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(index);
-    setUploadSuccess(null);
-    setError(null);
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/testimonial');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.filePath) {
-        handleTestimonialChange(index, 'image', result.filePath);
-        setUploadSuccess(index);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(null);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(null);
-    }
+  const handleImageUpload = (index, imageUrl, publicId) => {
+    handleTestimonialChange(index, 'image', imageUrl, publicId);
   };
 
   const handleSave = async () => {
@@ -142,12 +151,24 @@ const ServicesTestimonialsEditor = () => {
     setError(null);
 
     try {
+      // Prepare data with images including public IDs
+      const dataToSave = {
+        ...testimonialsData,
+        items: testimonialsData.items.map((item, index) => ({
+          ...item,
+          image: {
+            url: item.image,
+            publicId: imagePublicIds[index] || ''
+          }
+        }))
+      };
+
       const response = await fetch('/api/content/services?section=testimonials', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(testimonialsData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
@@ -325,30 +346,16 @@ const ServicesTestimonialsEditor = () => {
 
                 <div className="admin-editor__field">
                   <label className="admin-editor__label">Profile Image</label>
-                  <div className="admin-editor__image-preview">
-                    {testimonial.image && (
-                      <Image
-                        src={testimonial.image}
-                        alt={testimonial.name || 'Testimonial'}
-                        width={100}
-                        height={100}
-                        className="admin-editor__preview-img"
-                      />
-                    )}
-                  </div>
-                  <div className="admin-editor__image-upload">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(index, e)}
-                      className="admin-editor__file-input"
+                  <div className="admin-editor__image-upload-wrapper">
+                    <ImageUploader
+                      currentImage={testimonial.image}
+                      onImageUpload={(url, publicId) => handleImageUpload(index, url, publicId)}
+                      folder="services/testimonials"
+                      width={100}
+                      height={100}
+                      className="admin-editor__image-uploader"
+                      recommendedSize="100x100px"
                     />
-                    {uploadingImage === index && <span className="admin-editor__uploading">Uploading...</span>}
-                    {uploadSuccess === index && (
-                      <div className="admin-editor__upload-success">
-                        <p>Testimonial image uploaded successfully!</p>
-                      </div>
-                    )}
                   </div>
                   <div className="admin-editor__image-help">
                     <p className="admin-editor__help-text">
@@ -542,20 +549,13 @@ const ServicesTestimonialsEditor = () => {
           overflow: hidden;
         }
 
-        .admin-editor__image-upload {
+        .admin-editor__image-upload-wrapper {
           margin-bottom: 16px;
         }
-
-        .admin-editor__file-input {
-          display: block;
-          margin-bottom: 8px;
-        }
-
-        .admin-editor__uploading {
-          display: inline-block;
-          margin-left: 8px;
-          font-size: 14px;
-          color: #4569e7;
+        
+        .admin-editor__image-uploader {
+          width: 100%;
+          max-width: 200px;
         }
 
         .admin-editor__testimonial-item {

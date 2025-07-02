@@ -403,7 +403,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const settings = fetchSettings();
 
   // Fetch blog settings
-  const blogSettings = (getData("blog-settings") || {
+  const blogSettings = (await getData("blog-settings") || {
     pageTitle: "Blog",
     pageDescription: "Latest news and updates from our team",
     singlePageSettings: {
@@ -430,7 +430,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 
   // Fetch news data
-  const newsData = (getData("news") || { news: [] }) as { news: NewsItem[] };
+  const newsData = (await getData("news") || { news: [] }) as { news: NewsItem[] };
 
   // Find the post with the matching slug
   const post = newsData.news.find((item: NewsItem) => item.slug === slug);

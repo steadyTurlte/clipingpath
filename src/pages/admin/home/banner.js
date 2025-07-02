@@ -28,34 +28,74 @@ const AdminHomeBanner = () => {
   }, []);
 
   const handleSave = async (data) => {
+    console.log('Starting save with data:', JSON.stringify(data, null, 2));
     setSaving(true);
     setSaveSuccess(false);
+    setError(null);
 
     try {
+      // Ensure we're sending the correct data structure
+      const bannerDataToSave = {
+        ...data,
+        // Make sure images object exists and has the right structure
+        images: {
+          ...(data.images || {}),
+          // Ensure smallImages is an array with 4 items
+          smallImages: Array.isArray(data.images?.smallImages) 
+            ? data.images.smallImages 
+            : Array(4).fill('')
+        }
+      };
+
+      console.log('Prepared data for save:', JSON.stringify(bannerDataToSave, null, 2));
+      
       const response = await fetch('/api/content/home?section=banner', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(bannerDataToSave),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to save banner data');
+      let responseData;
+      try {
+        responseData = await response.json();
+        console.log('API Response:', {
+          status: response.status,
+          ok: response.ok,
+          data: responseData
+        });
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        throw new Error('Invalid response from server');
       }
 
-      setBannerData(data);
+      if (!response.ok) {
+        throw new Error(responseData.message || `Failed to save banner data (${response.status})`);
+      }
+
+      // Update the local state with the saved data
+      const savedData = responseData.data || bannerDataToSave;
+      console.log('Updating local state with:', savedData);
+      setBannerData(savedData);
 
       // Set the inline success message
       setSaveSuccess(true);
+      console.log('Save successful');
 
       // Hide success message after 3 seconds
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setSaveSuccess(false);
       }, 3000);
+      
+      return () => clearTimeout(timer);
     } catch (error) {
-      console.error('Error saving banner data:', error);
-      setError('Failed to save banner data. Please try again.');
+      console.error('Error saving banner data:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      setError(`Failed to save banner data: ${error.message}`);
     } finally {
       setSaving(false);
     }

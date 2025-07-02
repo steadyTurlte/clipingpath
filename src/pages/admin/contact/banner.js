@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ImageUploader from '@/components/admin/ImageUploader';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const ContactBannerEditor = () => {
   const [bannerData, setBannerData] = useState({
@@ -43,11 +43,12 @@ const ContactBannerEditor = () => {
     });
   };
 
-  const handleImageChange = (imageUrl) => {
-    setBannerData({
-      ...bannerData,
-      image: imageUrl
-    });
+  const handleImageUpload = (imageUrl, publicId) => {
+    setBannerData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: publicId || ''
+    }));
   };
 
   const handleSave = async () => {
@@ -145,16 +146,16 @@ const ContactBannerEditor = () => {
           <div className="admin-editor__section">
             <h2 className="admin-editor__section-title">Banner Image</h2>
             <div className="admin-editor__field">
-              <ImageUploader
-                currentImage={bannerData.image}
-                onImageChange={handleImageChange}
-                directory="contact"
-                label="Banner Image"
-                width={400}
-                height={200}
-                recommendedSize="1920x400px"
-                imageTypes="JPEG, PNG, WEBP"
-              />
+              <div className="admin-editor__image-uploader">
+                <ImageUploader
+                  currentImage={bannerData.image}
+                  onImageUpload={handleImageUpload}
+                  folder="contact/banner"
+                  label="Banner Image"
+                  recommendedSize="1920x400px"
+                  className="banner-editor__image-uploader"
+                />
+              </div>
              
             </div>
           </div>

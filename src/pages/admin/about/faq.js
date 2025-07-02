@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 import { toast } from 'react-toastify';
 
 const AboutFaqEditor = () => {
@@ -9,14 +10,12 @@ const AboutFaqEditor = () => {
     subtitle: '',
     title: '',
     image: '',
+    imagePublicId: '',
     questions: []
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -25,7 +24,24 @@ const AboutFaqEditor = () => {
       try {
         const response = await fetch('/api/content/about?section=faq');
         const data = await response.json();
-        setFaqData(data);
+        
+        // Handle both old and new data formats
+        if (data.image && typeof data.image === 'object') {
+          // New format with publicId
+          setFaqData({
+            ...data,
+            image: data.image.url || '',
+            imagePublicId: data.image.publicId || ''
+          });
+        } else {
+          // Old format or no image
+          setFaqData({
+            ...data,
+            image: data.image || '',
+            imagePublicId: data.imagePublicId || ''
+          });
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching FAQ data:', error);
@@ -37,27 +53,13 @@ const AboutFaqEditor = () => {
     fetchFaqData();
   }, []);
 
-  // Reset image loading state when the image URL changes
-  useEffect(() => {
-    if (faqData.image) {
-      setImageLoading(true);
-
-      // Create a new Image object to preload the image
-      const img = new Image();
-      img.src = faqData.image;
-
-      // When the image is loaded, update the loading state
-      img.onload = () => {
-        setImageLoading(false);
-      };
-
-      // If there's an error loading the image, also update the loading state
-      img.onerror = () => {
-        console.error('Error preloading image');
-        setImageLoading(false);
-      };
-    }
-  }, [faqData.image]);
+  const handleImageUpload = (imageUrl, publicId) => {
+    setFaqData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: publicId
+    }));
+  };
 
   const handleChange = (field, value) => {
     setFaqData({
@@ -103,55 +105,7 @@ const AboutFaqEditor = () => {
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    setUploadSuccess(false);
-    setError(null);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/faq');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.filePath) {
-        // Add a timestamp to the image URL to force a refresh
-        const imageUrl = `${result.filePath}?t=${Date.now()}`;
-
-        // Update the state with the new image URL
-        setFaqData(prevData => {
-          const newData = {
-            ...prevData,
-            image: imageUrl
-          };
-          return newData;
-        });
-
-        setUploadSuccess(true);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(false);
-        }, 3000);
-
-        // Reset the image loading state
-        setImageLoading(true);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(false);
-    }
-  };
+  // Image upload is now handled by the ImageUploader component
 
   const handleSave = async () => {
     setSaving(true);
@@ -159,12 +113,21 @@ const AboutFaqEditor = () => {
     setError(null);
 
     try {
+      // Prepare data with image object containing both URL and publicId
+      const dataToSave = {
+        ...faqData,
+        image: {
+          url: faqData.image,
+          publicId: faqData.imagePublicId
+        }
+      };
+
       const response = await fetch('/api/content/about?section=faq', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(faqData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
@@ -275,43 +238,18 @@ const AboutFaqEditor = () => {
 
             <div className="admin-editor__field">
               <label className="admin-editor__label">FAQ Image</label>
-
-              <div className="admin-editor__image-preview">
-                {faqData.image ? (
-                  <>
-                    {imageLoading && (
-                      <div className="admin-editor__image-loading">
-                        Loading image...
-                      </div>
-                    )}
-                    <div
-                      className={`admin-editor__preview-img-container ${imageLoading ? 'hidden' : ''}`}
-                      style={{
-                        backgroundImage: `url(${faqData.image})`,
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    />
-                  </>
-                ) : (
-                  <div className="admin-editor__no-image">No image uploaded</div>
-                )}
-              </div>
-
-              <div className="admin-editor__file-input">
-                <input
-                  type="file"
-                  accept="image/*"
+              
+              <div className="admin-editor__image-uploader-wrapper">
+                <ImageUploader
+                  value={faqData.image}
                   onChange={handleImageUpload}
-                  className="admin-editor__input"
-                  disabled={uploadingImage}
+                  folder="about/faq"
+                  width={1410}
+                  height={605}
+                  className="admin-editor__image-uploader"
                 />
-                {uploadingImage && <span className="admin-editor__uploading">Uploading...</span>}
               </div>
-
+              
               <div className="admin-editor__image-help">
                 <p className="admin-editor__help-text">
                   <strong>Recommended size:</strong> 1410x605px
@@ -477,6 +415,14 @@ const AboutFaqEditor = () => {
 
         .admin-editor__success p::before {
           content: '✅ ';
+        }
+        
+        .admin-editor__image-uploader-wrapper {
+          margin-bottom: 16px;
+        }
+        
+        .admin-editor__image-uploader {
+          width: 100%;
         }
 
         .admin-editor__content {

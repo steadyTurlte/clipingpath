@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   // GET request to retrieve all news
   if (req.method === 'GET') {
     try {
-      const data = getData('news') || { news: [] };
+      const data = await getData('news') || { news: [] };
       return res.status(200).json(data);
     } catch (error) {
       console.error('Error fetching news data:', error);

@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
 import ImageUploader from '@/components/admin/common/ImageUploader';
 import { toast } from 'react-toastify';
-import { deleteImage } from '@/utils/imageUtils';
 
 const AboutSponsorsEditor = () => {
   const [sponsorsData, setSponsorsData] = useState({
@@ -15,12 +14,8 @@ const AboutSponsorsEditor = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [pendingImages, setPendingImages] = useState({});
-  const [uploadingImages, setUploadingImages] = useState(false);
   const [error, setError] = useState(null);
-
-  // Create refs for image uploaders
-  const imageUploaderRefs = useRef({});
+  const [pendingImages, setPendingImages] = useState({});
 
   useEffect(() => {
     // Fetch the sponsors data when the component mounts
@@ -47,111 +42,102 @@ const AboutSponsorsEditor = () => {
     });
   };
 
-  const handleLogoChange = (index, value) => {
-    const updatedLogos = [...sponsorsData.logos];
-    updatedLogos[index] = value;
-
-    setSponsorsData({
-      ...sponsorsData,
-      logos: updatedLogos
+  // Handle logo upload completion
+  const handleLogoUpload = (index, imageUrl, publicId) => {
+    if (!imageUrl) return;
+    
+    setSponsorsData(prev => {
+      const updatedLogos = [...prev.logos];
+      updatedLogos[index] = imageUrl;
+      
+      return {
+        ...prev,
+        logos: updatedLogos
+      };
+    });
+    
+    // Also update the logo in the local state immediately
+    setLogos(prev => {
+      const newLogos = [...prev];
+      newLogos[index] = imageUrl;
+      return newLogos;
     });
   };
 
-  const handleAddLogo = () => {
-    setSponsorsData({
-      ...sponsorsData,
-      logos: [...sponsorsData.logos, '']
-    });
-  };
-
+  // Handle logo removal
   const handleRemoveLogo = (index) => {
-    const updatedLogos = [...sponsorsData.logos];
-    updatedLogos.splice(index, 1);
-
-    setSponsorsData({
-      ...sponsorsData,
-      logos: updatedLogos
+    setSponsorsData(prev => {
+      const updatedLogos = [...prev.logos];
+      updatedLogos.splice(index, 1);
+      
+      return {
+        ...prev,
+        logos: updatedLogos
+      };
+    });
+    
+    // Also update the local state immediately
+    setLogos(prev => {
+      const newLogos = [...prev];
+      newLogos.splice(index, 1);
+      return newLogos;
     });
   };
-
-  // Handle image selection (not immediate upload)
-  const handleImageSelect = (index, file) => {
-    // Store the pending image in state
-    setPendingImages({
-      ...pendingImages,
-      [index]: file
-    });
+  
+  // Add a new logo slot
+  const handleAddLogo = () => {
+    setSponsorsData(prev => ({
+      ...prev,
+      logos: [...prev.logos, '']
+    }));
+    
+    // Also update the local state
+    setLogos(prev => [...prev, '']);
   };
 
-  // Handle image upload when the form is submitted
-  const uploadPendingImages = async () => {
-    // Check if there are any pending images
-    const pendingIndices = Object.keys(pendingImages);
-    if (pendingIndices.length === 0) {
-      return true; // No images to upload
-    }
-
-    setUploadingImages(true);
-    let allUploadsSuccessful = true;
-
-    try {
-      // Upload all pending images
-      for (const indexStr of pendingIndices) {
-        const index = parseInt(indexStr);
-        const file = pendingImages[index];
-
-        // Get the uploader ref for this index
-        const uploaderRef = imageUploaderRefs.current[index];
-        if (uploaderRef && uploaderRef.hasSelectedFile()) {
-          const imagePath = await uploaderRef.uploadImage();
-
-          if (imagePath) {
-            // Update the logos array with the new image path
-            handleLogoChange(index, imagePath);
-          } else {
-            allUploadsSuccessful = false;
-          }
-        }
-      }
-
-      // Clear pending images after upload
-      setPendingImages({});
-      return allUploadsSuccessful;
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      return false;
-    } finally {
-      setUploadingImages(false);
-    }
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     setSaving(true);
-    setSaveSuccess(false);
     setError(null);
 
     try {
-      // First, upload any pending images
-      const uploadsSuccessful = await uploadPendingImages();
-
-      if (!uploadsSuccessful) {
-        setError('Some images failed to upload. Please try again.');
-        setSaving(false);
+      // Filter out any empty logo entries and ensure they're strings
+      const validLogos = sponsorsData.logos
+        .filter(logo => {
+          if (!logo) return false;
+          if (typeof logo === 'string') return logo.trim() !== '';
+          return false;
+        })
+        .map(logo => logo.trim());
+      
+      if (validLogos.length === 0) {
+        toast.warning('Please add at least one logo');
         return;
       }
+      
+      // Prepare data to save
+      const dataToSave = {
+        title: sponsorsData.title.trim(),
+        logos: validLogos
+      };
 
-      // Then save the sponsors data
       const response = await fetch('/api/content/about?section=sponsors', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(sponsorsData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
         setSaveSuccess(true);
-        // Scroll to top to show the success message
+        // Update local state with the saved data
+        setSponsorsData(prev => ({
+          ...prev,
+          logos: validLogos
+        }));
+        
+        // Show success message
         window.scrollTo(0, 0);
         toast.success('Sponsors section saved successfully!');
       } else {
@@ -229,16 +215,33 @@ const AboutSponsorsEditor = () => {
 
           <div className="admin-editor__section">
             <div className="admin-editor__section-header">
-              <h2 className="admin-editor__section-title">Sponsor Logos</h2>
+              <h3 className="admin-editor__section-title">Sponsor Logos</h3>
               <button
                 type="button"
-                className="admin-editor__add-button"
                 onClick={handleAddLogo}
+                className="add-logo"
+                disabled={saving}
+                style={{
+                  background: '#3182ce',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  marginTop: '20px',
+                  transition: 'background-color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#2c5282'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#3182ce'}
               >
-                Add Logo
+                <span>+</span> Add Logo
               </button>
             </div>
-
             <div className="admin-editor__sponsors-help">
               <p className="admin-editor__help-text">
                 <strong>Accepted formats:</strong> JPEG, PNG, GIF, WEBP, SVG (max 5MB)
@@ -246,42 +249,59 @@ const AboutSponsorsEditor = () => {
               <p className="admin-editor__help-text">
                 <strong>Recommended ratio:</strong> 3:2
               </p>
-              <p className="admin-editor__help-text">
-                Sponsor logos should be transparent PNG files
-              </p>
             </div>
-
-            <div className="admin-editor__logos-grid">
+            <div className="logo-grid">
               {sponsorsData.logos.map((logo, index) => (
-                <div key={index} className="admin-editor__logo-item">
+                <div key={index} className="logo-item">
                   <ImageUploader
-                    ref={el => imageUploaderRefs.current[index] = el}
                     currentImage={logo}
-                    onImageSelect={(file) => handleImageSelect(index, file)}
-                    onImageUpload={(path) => handleLogoChange(index, path)}
-                    folder="sponsor"
+                    onImageUpload={(url) => handleLogoUpload(index, url)}
+                    folder="sponsors"
                     label={`Logo ${index + 1}`}
-                    uploadOnSelect={false}
-                    className="admin-editor__logo-uploader"
-                    imageRatio=""
-                    helpText=""
+                    helpText="Recommended size: 200x100px"
+                    maxSize={2} // 2MB
+                    required
+                    style={{ marginBottom: '10px' }}
                   />
                   <button
                     type="button"
-                    className="admin-editor__remove-button"
                     onClick={() => handleRemoveLogo(index)}
+                    className="remove-logo"
+                    disabled={saving}
+                    style={{
+                      background: '#e53e3e',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      width: '100%',
+                      marginTop: '8px',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.target.style.backgroundColor = '#c53030'}
+                    onMouseOut={(e) => e.target.style.backgroundColor = '#e53e3e'}
                   >
-                    Remove
+                    Remove Logo
                   </button>
                 </div>
               ))}
+              
+              {sponsorsData.logos.length === 0 && (
+                <div className="admin-editor__no-logos" style={{
+                  gridColumn: '1 / -1',
+                  textAlign: 'center',
+                  padding: '20px',
+                  color: '#666',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '8px',
+                  marginTop: '10px'
+                }}>
+                  <p>No logos added yet. Click &quot;Add Logo&quot; to get started.</p>
+                </div>
+              )}
             </div>
-
-            {Object.keys(pendingImages).length > 0 && (
-              <div className="admin-editor__pending-notice">
-                <p>You have {Object.keys(pendingImages).length} pending image changes. Click &quot;Save Changes&quot; to upload and save them.</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -438,19 +458,74 @@ const AboutSponsorsEditor = () => {
           font-size: 14px;
         }
 
-        .admin-editor__logos-grid {
+        .logo-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
           gap: 20px;
+          margin-top: 20px;
         }
-
-        .admin-editor__logo-item {
-          background-color: #f8fafc;
+        
+        .logo-item {
+          background: white;
           border-radius: 8px;
-          padding: 16px;
+          padding: 15px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .logo-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .admin-editor__logo-preview {
+        .admin-editor__logo-uploader-container {
+          position: relative;
+          margin-bottom: 12px;
+        }
+        
+        .admin-editor__logo-uploader {
+          border: 1px solid #e2e8f0;
+          border-radius: 4px;
+          padding: 16px;
+          background-color: #f8fafc;
+        }
+        
+        .admin-editor__logo-uploader .image-uploader__preview {
+          min-height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
+          background-color: white;
+          border: 1px dashed #cbd5e1;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+        
+        .admin-editor__logo-uploader .image-uploader__preview-img {
+          max-width: 100%;
+          max-height: 120px;
+          width: auto;
+          height: auto;
+          object-fit: contain;
+        }
+        
+        .admin-editor__uploading-indicator {
+          position: absolute;
+          bottom: 16px;
+          left: 16px;
+          right: 16px;
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          text-align: center;
+          padding: 4px 0;
+          font-size: 12px;
+          border-radius: 4px;
+          z-index: 2;
+        }
+        
+        .admin-editor__logo-uploader-container {
+          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
