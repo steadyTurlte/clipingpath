@@ -84,7 +84,7 @@ const HomeOneBanner = ({ data }: HomeOneBannerProps) => {
                   aria-label="create account"
                   className="btn btn--primary"
                 >
-                  Get Proposal <i className="fa-solid fa-paper-plane"></i>
+                  Free Trial <i className="fa-solid fa-paper-plane"></i>
                 </Link>
               </div>
             </div>
