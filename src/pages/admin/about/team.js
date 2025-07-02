@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const AboutTeamEditor = () => {
   const [teamData, setTeamData] = useState({
@@ -13,9 +14,7 @@ const AboutTeamEditor = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(null);
   const [memberAdded, setMemberAdded] = useState(false);
   const [memberRemoved, setMemberRemoved] = useState(false);
   const [error, setError] = useState(null);
@@ -119,52 +118,27 @@ const AboutTeamEditor = () => {
     });
   };
 
-  const handleImageUpload = async (index, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(index);
-    setUploadSuccess(null);
-    setError(null);
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/team');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.filePath) {
-        const updatedMembers = [...teamData.members];
-        updatedMembers[index] = {
-          ...updatedMembers[index],
-          image: result.filePath
-        };
-
-        setTeamData({
-          ...teamData,
-          members: updatedMembers
-        });
-
-        setUploadSuccess(index);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(null);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(null);
-    }
+  // Extract public ID from a Cloudinary URL
+  const getPublicIdFromUrl = (url) => {
+    if (!url) return '';
+    // Extract public ID from Cloudinary URL format
+    const matches = url.match(/upload\/v\d+\/([^\/]+)\./);
+    return matches ? matches[1] : '';
   };
+
+  const handleImageUpload = useCallback((index, imageUrl) => {
+    const updatedMembers = [...teamData.members];
+    updatedMembers[index] = {
+      ...updatedMembers[index],
+      image: imageUrl,
+      imagePublicId: getPublicIdFromUrl(imageUrl)
+    };
+
+    setTeamData({
+      ...teamData,
+      members: updatedMembers
+    });
+  }, [teamData]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -344,30 +318,15 @@ const AboutTeamEditor = () => {
 
                 <div className="admin-editor__field">
                   <label className="admin-editor__label">Profile Image</label>
-                  <div className="admin-editor__image-preview">
-                    {member.image && (
-                      <Image
-                        src={member.image}
-                        alt={member.name || 'Team Member'}
-                        width={150}
-                        height={150}
-                        className="admin-editor__preview-img"
-                      />
-                    )}
-                  </div>
-                  <div className="admin-editor__image-upload">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(index, e)}
-                      className="admin-editor__file-input"
+                  <div className="admin-editor__image-uploader">
+                    <ImageUploader
+                      currentImage={member.image}
+                      onImageUpload={(imageUrl) => handleImageUpload(index, imageUrl)}
+                      folder="about/team"
+                      label={`Profile Image for ${member.name || `Team Member #${index + 1}`}`}
+                      recommendedSize="400x400px"
+                      className="team-member-uploader"
                     />
-                    {uploadingImage === index && <span className="admin-editor__uploading">Uploading...</span>}
-                    {uploadSuccess === index && (
-                      <div className="admin-editor__upload-success">
-                        <p>Team member image uploaded successfully!</p>
-                      </div>
-                    )}
                   </div>
                 </div>
 

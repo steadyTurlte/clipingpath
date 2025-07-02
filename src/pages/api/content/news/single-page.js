@@ -1,11 +1,11 @@
 import { getData, saveData } from '@/utils/dataUtils';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // GET request to retrieve blog single page settings
   if (req.method === 'GET') {
     try {
       // Get the blog single page settings from the JSON file
-      let singlePageSettings = getData('blog-single-page');
+      let singlePageSettings = await getData('blog-single-page');
       
       // If no settings exist, return default settings
       if (!singlePageSettings) {
@@ -61,7 +61,7 @@ export default function handler(req, res) {
         };
         
         // Save default settings
-        saveData('blog-single-page', singlePageSettings);
+        await saveData('blog-single-page', singlePageSettings);
       }
       
       return res.status(200).json(singlePageSettings);
@@ -74,15 +74,15 @@ export default function handler(req, res) {
   // PUT request to update blog single page settings
   if (req.method === 'PUT') {
     try {
-      const updatedSettings = req.body;
+      const updatedData = req.body;
       
       // Validate required fields
-      if (!updatedSettings.banner || !updatedSettings.layout || !updatedSettings.display) {
+      if (!updatedData.banner || !updatedData.layout || !updatedData.display) {
         return res.status(400).json({ message: 'Missing required settings' });
       }
       
       // Save the updated settings
-      const success = saveData('blog-single-page', updatedSettings);
+      const success = await saveData('blog-single-page', updatedData);
       
       if (!success) {
         return res.status(500).json({ message: 'Failed to save blog single page settings' });
@@ -90,7 +90,7 @@ export default function handler(req, res) {
       
       return res.status(200).json({ 
         message: 'Blog single page settings updated successfully', 
-        data: updatedSettings 
+        data: updatedData 
       });
     } catch (error) {
       console.error('Error updating blog single page settings:', error);

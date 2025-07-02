@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { getData, saveData } from './dataUtils';
+import fs from "fs";
+import path from "path";
+import { getData, saveData } from "./dataUtils";
 
 // Default data for the home page
 const defaultHomeData = {
@@ -14,9 +14,9 @@ const defaultHomeData = {
         "/images/banner/one.png",
         "/images/banner/two.png",
         "/images/banner/three.png",
-        "/images/banner/four.png"
-      ]
-    }
+        "/images/banner/four.png",
+      ],
+    },
   },
   services: {
     subtitle: "photodit's service",
@@ -28,7 +28,7 @@ const defaultHomeData = {
         image: "/images/services/slide-one.png",
         price: "$0.39 Only",
         link: "service-details",
-        className: "on"
+        className: "on",
       },
       {
         id: 2,
@@ -36,7 +36,7 @@ const defaultHomeData = {
         image: "/images/services/slide-two.png",
         price: "$0.39 Only",
         link: "service-details",
-        className: "fi"
+        className: "fi",
       },
       {
         id: 3,
@@ -44,7 +44,7 @@ const defaultHomeData = {
         image: "/images/services/slide-three.png",
         price: "$0.39 Only",
         link: "service-details",
-        className: "tw"
+        className: "tw",
       },
       {
         id: 4,
@@ -52,7 +52,7 @@ const defaultHomeData = {
         image: "/images/services/slide-four.png",
         price: "$0.39 Only",
         link: "service-details",
-        className: "th"
+        className: "th",
       },
       {
         id: 5,
@@ -60,29 +60,31 @@ const defaultHomeData = {
         image: "/images/services/slide-five.png",
         price: "$0.39 Only",
         link: "service-details",
-        className: "fo"
-      }
-    ]
+        className: "fo",
+      },
+    ],
   },
   about: {
     subtitle: "about us",
     title: "Edit your photo in seconds with photodit",
-    description: "Image editing services for ecommerce businesses and pros, from product photographers to Amazon sellers to global brands.",
-    additionalText: "Because a quick product shoot can easily turn into a week or more of editing and formatting your images. Let us look after the edits, so you can get back to the work that needs you.",
+    description:
+      "Image editing services for ecommerce businesses and pros, from product photographers to Amazon sellers to global brands.",
+    additionalText:
+      "Because a quick product shoot can easily turn into a week or more of editing and formatting your images. Let us look after the edits, so you can get back to the work that needs you.",
     priceTag: "Starting at 25¢ / per image",
     image: "/images/about-thumb.png",
     buttons: [
       {
         text: "Know More",
         link: "about-us",
-        type: "primary"
+        type: "primary",
       },
       {
         text: "Contact Us",
         link: "contact-us",
-        type: "secondary"
-      }
-    ]
+        type: "secondary",
+      },
+    ],
   },
   whySpecial: {
     subtitle: "why choose us",
@@ -93,21 +95,21 @@ const defaultHomeData = {
         id: 1,
         title: "Automatic & Quick Results",
         description: "Clipping Path Could be a process by which photo editor",
-        icon: "/images/choose/icon-one.png"
+        icon: "/images/choose/icon-one.png",
       },
       {
         id: 2,
         title: "Affordable Price",
         description: "Clipping Path Could be a process by which photo editor",
-        icon: "/images/choose/icon-two.png"
+        icon: "/images/choose/icon-two.png",
       },
       {
         id: 3,
         title: "Experienced Team",
         description: "Clipping Path Could be a process by which photo editor",
-        icon: "/images/choose/icon-three.png"
-      }
-    ]
+        icon: "/images/choose/icon-three.png",
+      },
+    ],
   },
   trickyBackgrounds: {
     subtitle: "Stunning Quality",
@@ -120,9 +122,9 @@ const defaultHomeData = {
         beforeAfterImages: [
           {
             before: "/images/after/one-before.png",
-            after: "/images/after/one-after.png"
-          }
-        ]
+            after: "/images/after/one-after.png",
+          },
+        ],
       },
       {
         id: 2,
@@ -131,9 +133,9 @@ const defaultHomeData = {
         beforeAfterImages: [
           {
             before: "/images/after/two-before.png",
-            after: "/images/after/two-after.png"
-          }
-        ]
+            after: "/images/after/two-after.png",
+          },
+        ],
       },
       {
         id: 3,
@@ -142,9 +144,9 @@ const defaultHomeData = {
         beforeAfterImages: [
           {
             before: "/images/after/three-before.png",
-            after: "/images/after/three-after.png"
-          }
-        ]
+            after: "/images/after/three-after.png",
+          },
+        ],
       },
       {
         id: 4,
@@ -153,9 +155,9 @@ const defaultHomeData = {
         beforeAfterImages: [
           {
             before: "/images/after/four-before.png",
-            after: "/images/after/four-after.png"
-          }
-        ]
+            after: "/images/after/four-after.png",
+          },
+        ],
       },
       {
         id: 5,
@@ -164,15 +166,15 @@ const defaultHomeData = {
         beforeAfterImages: [
           {
             before: "/images/after/one-before.png",
-            after: "/images/after/one-after.png"
-          }
-        ]
-      }
+            after: "/images/after/one-after.png",
+          },
+        ],
+      },
     ],
     decorativeImages: {
       one: "/images/quality/thumb-one.png",
-      two: "/images/quality/thumb-two.png"
-    }
+      two: "/images/quality/thumb-two.png",
+    },
   },
   testimonials: {
     subtitle: "testimonials",
@@ -184,7 +186,7 @@ const defaultHomeData = {
         position: "CEO, Founder",
         image: "/images/testimonial/one.png",
         rating: 5,
-        text: "Photodit is a fantastic service for anyone looking to enhance their product photography. The team is professional, responsive, and delivers high-quality results consistently."
+        text: "Photodit is a fantastic service for anyone looking to enhance their product photography. The team is professional, responsive, and delivers high-quality results consistently.",
       },
       {
         id: 2,
@@ -192,7 +194,7 @@ const defaultHomeData = {
         position: "Marketing Director",
         image: "/images/testimonial/two.png",
         rating: 5,
-        text: "I've been using Photodit for all my e-commerce product images, and the results have been outstanding. Their attention to detail and quick turnaround time have helped me improve my online store significantly."
+        text: "I've been using Photodit for all my e-commerce product images, and the results have been outstanding. Their attention to detail and quick turnaround time have helped me improve my online store significantly.",
       },
       {
         id: 3,
@@ -200,9 +202,9 @@ const defaultHomeData = {
         position: "Product Manager",
         image: "/images/testimonial/three.png",
         rating: 5,
-        text: "The team at Photodit has been instrumental in helping us maintain a consistent look across all our product images. Their clipping path service is precise and their customer service is excellent."
-      }
-    ]
+        text: "The team at Photodit has been instrumental in helping us maintain a consistent look across all our product images. Their clipping path service is precise and their customer service is excellent.",
+      },
+    ],
   },
   pricing: {
     subtitle: "pricing plan",
@@ -219,9 +221,9 @@ const defaultHomeData = {
           "Background Removal",
           "24/7 Support",
           "Quick Delivery",
-          "100% Quality Guarantee"
+          "100% Quality Guarantee",
         ],
-        recommended: false
+        recommended: false,
       },
       {
         id: 2,
@@ -236,9 +238,9 @@ const defaultHomeData = {
           "Color Correction",
           "24/7 Priority Support",
           "Express Delivery",
-          "100% Quality Guarantee"
+          "100% Quality Guarantee",
         ],
-        recommended: true
+        recommended: true,
       },
       {
         id: 3,
@@ -254,11 +256,11 @@ const defaultHomeData = {
           "Image Retouching",
           "24/7 VIP Support",
           "Rush Delivery",
-          "100% Quality Guarantee"
+          "100% Quality Guarantee",
         ],
-        recommended: false
-      }
-    ]
+        recommended: false,
+      },
+    ],
   },
   news: {
     subtitle: "photodit news",
@@ -266,7 +268,8 @@ const defaultHomeData = {
   },
   cta: {
     title: "Ready to get started?",
-    description: "Try our services risk-free with a free trial. No credit card required.",
+    description:
+      "Try our services risk-free with a free trial. No credit card required.",
   },
   sponsors: {
     title: "Trusted by leading brands",
@@ -275,39 +278,40 @@ const defaultHomeData = {
       "/images/sponsor/two.png",
       "/images/sponsor/three.png",
       "/images/sponsor/four.png",
-      "/images/sponsor/five.png"
-    ]
-  }
+      "/images/sponsor/five.png",
+    ],
+  },
 };
 
 // Default data for settings
 const defaultSettingsData = {
   site: {
     title: "Photodit - Clipping Path Service",
-    description: "Professional photo editing services for e-commerce businesses and photographers."
+    description:
+      "Professional photo editing services for e-commerce businesses and photographers.",
   },
   contact: {
     email: "info@photodit.com",
     phone: "+1 (732) 798-0976",
-    address: "785 15h Street, Office 478 Berlin"
+    address: "785 15h Street, Office 478 Berlin",
   },
   email: {
     adminEmail: "mahmud.amaan20104@gmail.com",
     contactFormSubject: "New Contact Form Submission",
-    quoteFormSubject: "New Quote Request"
-  }
+    quoteFormSubject: "New Quote Request",
+  },
 };
 
 // Default data for news
 const defaultNewsData = {
-  news: []
+  news: [],
 };
 
 // Initialize data directory and default files
 export function initializeData() {
   try {
     // Get the absolute path to the data directory
-    const dataDirectory = path.join(process.cwd(), 'src/data');
+    const dataDirectory = path.join(process.cwd(), "src/data");
 
     // Create the data directory if it doesn't exist
     if (!fs.existsSync(dataDirectory)) {
@@ -315,26 +319,26 @@ export function initializeData() {
     }
 
     // Initialize home data
-    const homeData = getData('home');
+    const homeData = getData("home");
     if (!homeData || Object.keys(homeData).length === 0) {
-      saveData('home', defaultHomeData);
+      saveData("home", defaultHomeData);
     }
 
     // Initialize settings data
-    const settingsData = getData('settings');
+    const settingsData = getData("settings");
     if (!settingsData || Object.keys(settingsData).length === 0) {
-      saveData('settings', defaultSettingsData);
+      saveData("settings", defaultSettingsData);
     }
 
     // Initialize news data
-    const newsData = getData('news');
+    const newsData = getData("news");
     if (!newsData || Object.keys(newsData).length === 0) {
-      saveData('news', defaultNewsData);
+      saveData("news", defaultNewsData);
     }
 
     return true;
   } catch (error) {
-    console.error('Error initializing data:', error);
+    console.error("Error initializing data:", error);
     return false;
   }
 }

@@ -1,4 +1,5 @@
 import { getData } from '@/utils/dataUtils';
+import { getAdminEmail } from '@/utils/emailUtils';
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
@@ -17,13 +18,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // Get the email settings from the settings data
-    const settings = getData('settings') || {};
-    const emailSettings = settings.email || {};
-
-
-    // Prioritize admin email from settings.email.adminEmail
-    const adminEmail = emailSettings.adminEmail || process.env.EMAIL_USER || settings.contact?.email || 'admin@photodit.com';
+    // Get the admin email from our utility function
+    const adminEmail = await getAdminEmail();
 
     // Create email content
     let html = '<h1>New Contact Form Submission</h1>';

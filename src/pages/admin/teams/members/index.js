@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ImageUploader from '@/components/admin/ImageUploader';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const TeamMembersEditor = () => {
   const [teamData, setTeamData] = useState({
@@ -157,6 +157,19 @@ const TeamMembersEditor = () => {
 
     fetchTeamData();
   }, []);
+
+  const handleImageUpload = (imageUrl, publicId) => {
+    const updatedMembers = [...teamData.members];
+    updatedMembers.forEach((member) => {
+      if (member.id === publicId) {
+        member.image = imageUrl;
+      }
+    });
+    setTeamData({
+      ...teamData,
+      members: updatedMembers
+    });
+  };
 
   const handleInputChange = (field, value) => {
     setTeamData({
@@ -374,7 +387,10 @@ const TeamMembersEditor = () => {
                     }
                   };
                   const updatedMembers = [...teamData.members, newMember];
-                  handleInputChange('members', updatedMembers);
+                  setTeamData({
+                    ...teamData,
+                    members: updatedMembers
+                  });
 
                   // Provide feedback
                   setMemberAdded(true);
@@ -423,7 +439,10 @@ const TeamMembersEditor = () => {
                           if (confirm(`Are you sure you want to remove ${member.name || 'this team member'}?`)) {
                             const updatedMembers = [...teamData.members];
                             updatedMembers.splice(index, 1);
-                            handleInputChange('members', updatedMembers);
+                            setTeamData({
+                              ...teamData,
+                              members: updatedMembers
+                            });
 
                             setMemberRemoved(true);
 
@@ -443,20 +462,14 @@ const TeamMembersEditor = () => {
                         <div className="admin-page__member-image">
                           <ImageUploader
                             currentImage={member.image}
-                            onImageChange={(imageUrl) => {
-                              const updatedMembers = [...teamData.members];
-                              updatedMembers[index] = {
-                                ...updatedMembers[index],
-                                image: imageUrl
-                              };
-                              handleInputChange('members', updatedMembers);
-                            }}
-                            directory="images/team"
-                            label="Team Member Photo"
+                            onImageUpload={handleImageUpload}
+                            folder="team/members"
+                            label="Member Photo"
+                            recommendedSize="400x400px"
+                            className="member-editor__image-uploader"
+                            id={`member-${member.id}`}
                             width={200}
                             height={200}
-                            id={`member-${member.id}`}
-                            recommendedSize="300x300px (square)"
                             imageTypes="JPEG, PNG, WEBP"
                           />
                         </div>

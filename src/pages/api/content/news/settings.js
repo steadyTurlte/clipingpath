@@ -1,11 +1,11 @@
 import { getData, saveData } from '@/utils/dataUtils';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // GET request to retrieve blog settings
   if (req.method === 'GET') {
     try {
       // Get the blog settings from the JSON file
-      let blogSettings = getData('blog-settings');
+      let blogSettings = await getData('blog-settings');
       
       // If no settings exist, return default settings
       if (!blogSettings) {
@@ -35,7 +35,7 @@ export default function handler(req, res) {
         };
         
         // Save default settings
-        saveData('blog-settings', blogSettings);
+        await saveData('blog-settings', blogSettings);
       }
       
       return res.status(200).json(blogSettings);
@@ -48,26 +48,26 @@ export default function handler(req, res) {
   // PUT request to update blog settings
   if (req.method === 'PUT') {
     try {
-      const updatedSettings = req.body;
+      const updatedData = req.body;
       
       // Validate required fields
-      if (!updatedSettings.pageTitle) {
+      if (!updatedData.pageTitle) {
         return res.status(400).json({ message: 'Page title is required' });
       }
       
       // Save the updated settings
-      const success = saveData('blog-settings', updatedSettings);
+      const success = await saveData('blog-settings', updatedData);
       
       if (!success) {
-        return res.status(500).json({ message: 'Failed to save blog settings' });
+        return res.status(500).json({ message: 'Failed to save blog-settings data' });
       }
       
       return res.status(200).json({ 
-        message: 'Blog settings updated successfully', 
-        data: updatedSettings 
+        message: 'Blog-settings data updated successfully', 
+        data: updatedData 
       });
     } catch (error) {
-      console.error('Error updating blog settings:', error);
+      console.error('Error updating blog-settings data:', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
   }

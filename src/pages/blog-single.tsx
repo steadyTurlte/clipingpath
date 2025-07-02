@@ -11,7 +11,7 @@ interface NewsData {
 // This is just a redirect to the first blog post or to the blog index if none exists
 export const getServerSideProps: GetServerSideProps = async () => {
   // Fetch news data
-  const newsData = (getData('news') || { news: [] }) as NewsData;
+  const newsData = (await getData('news') || { news: [] }) as NewsData;
 
   // If there are blog posts, redirect to the first one
   if (newsData.news && newsData.news.length > 0) {

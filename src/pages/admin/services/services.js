@@ -3,15 +3,15 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 import { toast } from 'react-toastify';
 
 const ServicesItemsEditor = () => {
   const [servicesData, setServicesData] = useState([]);
+  const [imagePublicIds, setImagePublicIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(null);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [serviceRemoved, setServiceRemoved] = useState(false);
   const [error, setError] = useState(null);
@@ -22,7 +22,35 @@ const ServicesItemsEditor = () => {
       try {
         const response = await fetch('/api/content/services?section=services');
         const data = await response.json();
-        setServicesData(data);
+        
+        if (data && data.length > 0) {
+          // Initialize services data and public IDs
+          const initialServices = [];
+          const initialPublicIds = [];
+          
+          data.forEach(service => {
+            if (service.image && typeof service.image === 'object') {
+              initialServices.push({
+                ...service,
+                image: service.image.url || ''
+              });
+              initialPublicIds.push(service.image.publicId || '');
+            } else {
+              initialServices.push({
+                ...service,
+                image: service.image || ''
+              });
+              initialPublicIds.push('');
+            }
+          });
+          
+          setServicesData(initialServices);
+          setImagePublicIds(initialPublicIds);
+        } else {
+          setServicesData([]);
+          setImagePublicIds([]);
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching services data:', error);
@@ -34,7 +62,7 @@ const ServicesItemsEditor = () => {
     fetchServicesData();
   }, []);
 
-  const handleServiceChange = (index, field, value) => {
+  const handleServiceChange = (index, field, value, publicId = null) => {
     const updatedServices = [...servicesData];
     updatedServices[index] = {
       ...updatedServices[index],
@@ -42,6 +70,13 @@ const ServicesItemsEditor = () => {
     };
 
     setServicesData(updatedServices);
+    
+    // Update public ID if provided
+    if (publicId !== null && field === 'image') {
+      const updatedPublicIds = [...imagePublicIds];
+      updatedPublicIds[index] = publicId;
+      setImagePublicIds(updatedPublicIds);
+    }
   };
 
   const handleAddService = () => {
@@ -57,6 +92,9 @@ const ServicesItemsEditor = () => {
         className: ''
       }
     ]);
+    
+    // Add an empty public ID for the new service
+    setImagePublicIds([...imagePublicIds, '']);
 
     setServiceAdded(true);
 
@@ -69,8 +107,12 @@ const ServicesItemsEditor = () => {
   const handleRemoveService = (index) => {
     const updatedServices = [...servicesData];
     updatedServices.splice(index, 1);
+    
+    const updatedPublicIds = [...imagePublicIds];
+    updatedPublicIds.splice(index, 1);
 
     setServicesData(updatedServices);
+    setImagePublicIds(updatedPublicIds);
 
     setServiceRemoved(true);
 
@@ -80,41 +122,19 @@ const ServicesItemsEditor = () => {
     }, 3000);
   };
 
-  const handleImageUpload = async (index, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(index);
-    setUploadSuccess(null);
-    setError(null);
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images/services');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.filePath) {
-        handleServiceChange(index, 'image', result.filePath);
-        setUploadSuccess(index);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(null);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(null);
-    }
+  const handleImageUpload = (index, imageUrl, publicId) => {
+    // Update the service with the new image URL
+    const updatedServices = [...servicesData];
+    updatedServices[index] = {
+      ...updatedServices[index],
+      image: imageUrl
+    };
+    setServicesData(updatedServices);
+    
+    // Update the public ID
+    const updatedPublicIds = [...imagePublicIds];
+    updatedPublicIds[index] = publicId || '';
+    setImagePublicIds(updatedPublicIds);
   };
 
   const handleSave = async () => {
@@ -123,12 +143,29 @@ const ServicesItemsEditor = () => {
     setError(null);
 
     try {
+      // Prepare data with images including public IDs
+      const dataToSave = servicesData.map((service, index) => {
+        const serviceData = { ...service };
+        
+        // Only include image object if there's an image URL
+        if (service.image) {
+          serviceData.image = {
+            url: service.image,
+            publicId: imagePublicIds[index] || ''
+          };
+        } else {
+          serviceData.image = '';
+        }
+        
+        return serviceData;
+      });
+
       const response = await fetch('/api/content/services?section=services', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(servicesData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
@@ -296,39 +333,47 @@ const ServicesItemsEditor = () => {
 
                 <div className="admin-editor__field">
                   <label className="admin-editor__label">Service Image</label>
-                  <div className="admin-editor__image-preview">
-                    {service.image && (
-                      <Image
-                        src={service.image}
-                        alt={service.title || 'Service Image'}
-                        width={200}
-                        height={150}
-                        className="admin-editor__preview-img"
-                      />
-                    )}
-                  </div>
                   <div className="admin-editor__image-upload">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(index, e)}
-                      className="admin-editor__file-input"
+                    <ImageUploader
+                      currentImage={service.image}
+                      onImageSelect={(file) => {
+                        const updatedServices = [...servicesData];
+                        updatedServices[index] = {
+                          ...updatedServices[index],
+                          image: URL.createObjectURL(file)
+                        };
+                        setServicesData(updatedServices);
+                      }}
+                      onImageUpload={(url, publicId) => handleImageUpload(index, url, publicId)}
+                      folder="services/items"
+                      label={`Service ${index + 1} Image`}
+                      recommendedSize="300x300px"
+                      className="admin-editor__image-uploader"
+                      oldPublicId={imagePublicIds[index] || ''}
+                      uploadOnSelect={true}
                     />
-                    {uploadingImage === index && <span className="admin-editor__uploading">Uploading...</span>}
-                    {uploadSuccess === index && (
-                      <div className="admin-editor__upload-success">
-                        <p>Service image uploaded successfully!</p>
+                    {service.image && (
+                      <div className="admin-editor__image-preview">
+                        <Image
+                          src={service.image} 
+                          alt={`Preview ${index}`} 
+                          width={200}
+                          height={200}
+                          className="admin-editor__preview-image"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/images/placeholder-image.png';
+                          }}
+                        />
                       </div>
                     )}
                   </div>
-                  <div className="admin-editor__image-help">
-                    <p className="admin-editor__help-text">
-                      <strong>Recommended size:</strong> 400x300px
-                    </p>
-                    <p className="admin-editor__help-text">
-                      <strong>Image types:</strong> JPEG, PNG, WEBP
-                    </p>
-                  </div>
+                  <p className="admin-editor__help-text">
+                    <strong>Recommended size:</strong> 400x300px
+                  </p>
+                  <p className="admin-editor__help-text">
+                    <strong>Image types:</strong> JPEG, PNG, WEBP
+                  </p>
                 </div>
               </div>
             ))}
@@ -337,6 +382,32 @@ const ServicesItemsEditor = () => {
       </div>
 
       <style jsx>{`
+        .admin-editor__image-upload {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        
+        .admin-editor__image-preview {
+          max-width: 200px;
+          border: 1px solid #e2e8f0;
+          border-radius: 0.5rem;
+          overflow: hidden;
+        }
+        
+        .admin-editor__preview-image {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+        
+        .admin-editor__help-text {
+          margin: 0.25rem 0;
+          color: #64748b;
+          font-size: 0.875rem;
+        }
+        
         .admin-editor__loading {
           display: flex;
           justify-content: center;
@@ -514,20 +585,13 @@ const ServicesItemsEditor = () => {
           overflow: hidden;
         }
 
-        .admin-editor__image-upload {
+        .admin-editor__image-upload-wrapper {
           margin-bottom: 16px;
         }
-
-        .admin-editor__file-input {
-          display: block;
-          margin-bottom: 8px;
-        }
-
-        .admin-editor__uploading {
-          display: inline-block;
-          margin-left: 8px;
-          font-size: 14px;
-          color: #4569e7;
+        
+        .admin-editor__image-uploader {
+          width: 100%;
+          max-width: 300px;
         }
 
         .admin-editor__service-item {

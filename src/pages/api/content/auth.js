@@ -1,13 +1,13 @@
 import { getData, saveData } from '@/utils/dataUtils';
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // GET request to retrieve auth data
   if (req.method === 'GET') {
     try {
       const { section } = req.query;
       
       // Get the auth data from the JSON file
-      let authData = getData('auth');
+      let authData = await getData('auth');
       
       // If no data exists, return an empty object
       if (!authData) {
@@ -34,7 +34,7 @@ export default function handler(req, res) {
       const updatedData = req.body;
       
       // Get the current auth data
-      let authData = getData('auth') || {};
+      let authData = (await getData('auth')) || {};
       
       // If a specific section is being updated
       if (section) {
@@ -48,7 +48,7 @@ export default function handler(req, res) {
       }
       
       // Save the updated data
-      const success = saveData('auth', authData);
+      const success = await saveData('auth', authData);
       
       if (!success) {
         return res.status(500).json({ message: 'Failed to save auth data' });

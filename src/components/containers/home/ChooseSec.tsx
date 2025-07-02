@@ -34,7 +34,14 @@ interface ChooseSecProps {
 const ChooseSec = ({ data }: ChooseSecProps) => {
   const [videoActive, setVideoActive] = useState(false);
 
-  const sectionData = data;
+  // Defensive fallback for missing data or videoUrl
+  const sectionData = {
+    subtitle: data?.subtitle || "Why choose us",
+    title: data?.title || "Why we are special",
+    videoUrl: data?.videoUrl || "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    image: data?.image || "",
+    features: data?.features || [],
+  };
 
   // Get YouTube video ID
   const videoId = getYoutubeVideoId(sectionData.videoUrl || "");

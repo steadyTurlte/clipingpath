@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 import { toast } from 'react-toastify';
 
 const AboutOverviewEditor = () => {
@@ -12,6 +13,8 @@ const AboutOverviewEditor = () => {
     description: '',
     mission: ''
   });
+  
+  const [imagePublicIds, setImagePublicIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -23,6 +26,34 @@ const AboutOverviewEditor = () => {
       try {
         const response = await fetch('/api/content/about?section=overview');
         const data = await response.json();
+        
+        // Initialize imagePublicIds based on the fetched data
+        if (data.images && data.images.length > 0) {
+          const initialPublicIds = data.images.map(image => {
+            if (typeof image === 'object' && image.publicId) {
+              return image.publicId;
+            }
+            // Extract public ID from URL if it's a Cloudinary URL
+            if (typeof image === 'string' && image.includes('cloudinary')) {
+              const parts = image.split('/');
+              const publicId = parts[parts.length - 1].split('.')[0];
+              return publicId;
+            }
+            return null;
+          });
+          setImagePublicIds(initialPublicIds);
+          
+          // Convert images to array of strings (URLs) for backward compatibility
+          if (data.images.some(img => typeof img === 'object')) {
+            data.images = data.images.map(img => 
+              typeof img === 'object' ? img.url : img
+            );
+          }
+        } else {
+          // Initialize with empty public IDs if no images
+          setImagePublicIds(Array(3).fill(null));
+        }
+        
         setOverviewData(data);
         setLoading(false);
       } catch (error) {
@@ -56,58 +87,23 @@ const AboutOverviewEditor = () => {
     });
   };
 
-  const handleImageChange = (index, value) => {
+  const handleImageChange = (index, imageUrl, publicId = null) => {
     const updatedImages = [...overviewData.images];
-    updatedImages[index] = value;
+    const updatedPublicIds = [...imagePublicIds];
+    
+    updatedImages[index] = imageUrl;
+    updatedPublicIds[index] = publicId || updatedPublicIds[index];
 
     setOverviewData({
       ...overviewData,
       images: updatedImages
     });
+    
+    setImagePublicIds(updatedPublicIds);
   };
 
-  const [uploadingImage, setUploadingImage] = useState(null);
-
-  const handleImageUpload = async (index, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(index);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('directory', 'images/about');
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed with status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (!result.filePath) {
-        throw new Error('No file path returned from server');
-      }
-
-      // Update the image URL in the state
-      const updatedImages = [...overviewData.images];
-      updatedImages[index] = result.filePath;
-
-      setOverviewData({
-        ...overviewData,
-        images: updatedImages
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error(`Failed to upload image: ${error.message}`);
-    } finally {
-      setUploadingImage(null);
-    }
+  const handleImageUpload = (index, imageUrl, publicId) => {
+    handleImageChange(index, imageUrl, publicId);
   };
 
   const handleSave = async () => {
@@ -116,12 +112,21 @@ const AboutOverviewEditor = () => {
     setError(null);
 
     try {
+      // Prepare data with images including public IDs
+      const dataToSave = {
+        ...overviewData,
+        images: overviewData.images.map((url, index) => ({
+          url,
+          publicId: imagePublicIds[index] || null
+        }))
+      };
+
       const response = await fetch('/api/content/about?section=overview', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(overviewData)
+        body: JSON.stringify(dataToSave)
       });
 
       if (response.ok) {
@@ -241,35 +246,25 @@ const AboutOverviewEditor = () => {
               </p>
             </div>
 
-            {overviewData.images.map((image, index) => (
+            {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="admin-editor__image-field">
                 <div className="admin-editor__field">
                   <label className="admin-editor__label">Image {index + 1}</label>
                   <div className="admin-editor__input-group">
-                    <input
-                      type="text"
-                      className="admin-editor__input"
-                      value={image}
-                      onChange={(e) => handleImageChange(index, e.target.value)}
-                      placeholder="Enter image URL"
+                    <ImageUploader
+                      value={overviewData.images[index] || ''}
+                      onChange={(url, publicId) => handleImageUpload(index, url, publicId)}
+                      folder="about/overview"
+                      className="admin-editor__image-uploader"
+                      width={400}
+                      height={300}
                     />
-                    <div className="admin-editor__upload-wrapper">
-                      <label className="admin-editor__upload-button">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(index, e)}
-                          className="admin-editor__file-input"
-                        />
-                        {uploadingImage === index ? 'Uploading...' : 'Upload'}
-                      </label>
-                    </div>
                   </div>
                 </div>
                 <div className="admin-editor__image-preview">
-                  {image && (
+                  {overviewData.images[index] && (
                     <Image
-                      src={image}
+                      src={overviewData.images[index]}
                       alt={`Preview ${index + 1}`}
                       className="admin-editor__preview-img"
                       width={100}
@@ -495,6 +490,10 @@ const AboutOverviewEditor = () => {
 
         .admin-editor__file-input {
           display: none;
+        }
+        
+        .admin-editor__image-uploader {
+          width: 100%;
         }
       `}</style>
     </AdminLayout>

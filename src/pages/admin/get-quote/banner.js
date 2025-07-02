@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ImageUploader from '@/components/admin/ImageUploader';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const GetQuoteBannerEditor = () => {
   const [bannerData, setBannerData] = useState({
@@ -46,11 +46,12 @@ const GetQuoteBannerEditor = () => {
     });
   };
 
-  const handleImageChange = (imageUrl) => {
-    setBannerData({
-      ...bannerData,
-      image: imageUrl
-    });
+  const handleImageUpload = (imageUrl, publicId) => {
+    setBannerData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: publicId || ''
+    }));
   };
 
   const handleSave = async () => {
@@ -146,16 +147,16 @@ const GetQuoteBannerEditor = () => {
 
             <div className="admin-editor__field">
               <label className="admin-editor__label">Banner Image</label>
-              <ImageUploader
-                currentImage={bannerData.image}
-                onImageChange={handleImageChange}
-                directory="get-quote"
-                label="Banner Image"
-                width={400}
-                height={200}
-                recommendedSize="1920x400px"
-                imageTypes="JPEG, PNG, WEBP"
-              />
+              <div className="admin-editor__image-uploader">
+                <ImageUploader
+                  currentImage={bannerData.image}
+                  onImageUpload={handleImageUpload}
+                  folder="get-quote/banner"
+                  label="Banner Image"
+                  recommendedSize="1920x400px"
+                  className="banner-editor__image-uploader"
+                />
+              </div>
             
             </div>
           </div>

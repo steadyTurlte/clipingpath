@@ -14,11 +14,25 @@ export default async function handler(req, res) {
     }
     
     // Get existing news data
-    const data = getData('news') || { news: [] };
+    let data = getData('news');
+    
+    // Initialize data if it doesn't exist
+    if (!data) {
+      data = { news: [] };
+    } else if (!Array.isArray(data.news)) {
+      // Ensure news is an array
+      data.news = [];
+    }
     
     // Add ID if not provided
     if (!newsData.id) {
       newsData.id = Date.now();
+    }
+    
+    // Add created/updated timestamp
+    newsData.updatedAt = new Date().toISOString();
+    if (!newsData.createdAt) {
+      newsData.createdAt = newsData.updatedAt;
     }
     
     // Add the new news article

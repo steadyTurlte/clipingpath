@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ImageUploader from '@/components/admin/ImageUploader';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const AboutBannerEditor = () => {
   const [bannerData, setBannerData] = useState({
     title: '',
-    image: ''
+    image: '',
+    imagePublicId: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -50,11 +51,20 @@ const AboutBannerEditor = () => {
     });
   };
 
+  // Extract public ID from a Cloudinary URL
+  const getPublicIdFromUrl = (url) => {
+    if (!url) return '';
+    // Extract public ID from Cloudinary URL format
+    const matches = url.match(/upload\/v\d+\/([^\/]+)\./);
+    return matches ? matches[1] : '';
+  };
+
   const handleImageChange = (imageUrl) => {
-    setBannerData({
-      ...bannerData,
-      image: imageUrl
-    });
+    setBannerData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: getPublicIdFromUrl(imageUrl)
+    }));
   };
 
   const handleSave = async () => {
@@ -161,16 +171,16 @@ const AboutBannerEditor = () => {
           <div className="admin-editor__section">
             <h2 className="admin-editor__section-title">Banner Image</h2>
             <div className="admin-editor__field">
-              <ImageUploader
-                currentImage={bannerData.image}
-                onImageChange={handleImageChange}
-                directory="about"
-                label="Banner Image"
-                width={400}
-                height={200}
-                recommendedSize="1920x400px"
-                imageTypes="JPEG, PNG, WEBP"
-              />
+              <div className="admin-editor__image-uploader">
+                <ImageUploader
+                  currentImage={bannerData.image}
+                  onImageUpload={handleImageChange}
+                  folder="about/banner"
+                  label="Banner Image"
+                  recommendedSize="1920x400px"
+                  className="banner-editor__image-uploader"
+                />
+              </div>
           
             </div>
           </div>
@@ -294,7 +304,11 @@ const AboutBannerEditor = () => {
         }
 
         .admin-editor__field {
-          margin-bottom: 16px;
+          margin-bottom: 24px;
+        }
+
+        .admin-editor__image-uploader {
+          margin-top: 8px;
         }
 
         .admin-editor__label {

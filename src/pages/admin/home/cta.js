@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ImageUploader from '@/components/admin/common/ImageUploader';
 
 const HomeCtaEditor = () => {
   const [ctaData, setCtaData] = useState({
     title: '',
     description: '',
-    image: ''
+    image: '',
+    imagePublicId: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
     // Fetch the CTA data when the component mounts
@@ -42,43 +42,21 @@ const HomeCtaEditor = () => {
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    setError(null);
-    setUploadSuccess(false);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', 'images');
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-      if (result.filePath) {
-        setCtaData({
-          ...ctaData,
-          image: result.filePath
-        });
-        setUploadSuccess(true);
-
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          setUploadSuccess(false);
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError('Failed to upload image');
-    } finally {
-      setUploadingImage(false);
-    }
+  // Extract public ID from a Cloudinary URL
+  const getPublicIdFromUrl = (url) => {
+    if (!url) return '';
+    // Extract public ID from Cloudinary URL format
+    const matches = url.match(/upload\/v\d+\/([^\/]+)\./);
+    return matches ? matches[1] : '';
   };
+
+  const handleImageUpload = useCallback((imageUrl) => {
+    setCtaData(prevData => ({
+      ...prevData,
+      image: imageUrl,
+      imagePublicId: getPublicIdFromUrl(imageUrl)
+    }));
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
@@ -191,31 +169,17 @@ const HomeCtaEditor = () => {
 
             <div className="admin-editor__field">
               <label className="admin-editor__label">Background Image</label>
-
-              {ctaData.image && (
-                <div className="admin-editor__image-preview">
-                  <Image
-                    src={ctaData.image}
-                    alt="CTA Background"
-                    className="admin-editor__preview-img"
-                    width={400}
-                    height={200}
-                    style={{ objectFit: 'contain', maxHeight: '200px' }}
-                    unoptimized={true}
-                  />
-                </div>
-              )}
-
-              <div className="admin-editor__file-input">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="admin-editor__input"
-                  disabled={uploadingImage}
+              
+              <div className="admin-editor__image-uploader">
+                <ImageUploader
+                  currentImage={ctaData.image}
+                  onImageUpload={handleImageUpload}
+                  folder="home/cta"
+                  label="CTA Background Image"
+                  recommendedSize="1920x600px"
                 />
-                {uploadingImage && <span className="admin-editor__uploading">Uploading...</span>}
               </div>
+              
               <div className="admin-editor__image-help">
                 <p className="admin-editor__help-text">
                   <strong>Recommended size:</strong> 1920x600px
@@ -400,15 +364,8 @@ const HomeCtaEditor = () => {
           margin: 0 auto;
         }
 
-        .admin-editor__file-input {
-          position: relative;
-        }
-
-        .admin-editor__uploading {
-          display: inline-block;
+        .admin-editor__image-uploader {
           margin-top: 8px;
-          font-size: 14px;
-          color: #4569e7;
         }
 
         @media (max-width: 768px) {
