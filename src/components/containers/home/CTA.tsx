@@ -51,7 +51,7 @@ const CTA = ({ data }: CTAProps) => {
                     </div>
                     <div className="cta__group ">
                       <Link href="/get-quote" className="btn btn--secondary">
-                        Get Proposal <i className="fa-solid fa-paper-plane"></i>
+                        Free Trial <i className="fa-solid fa-paper-plane"></i>
                       </Link>
                     </div>
                   </div>

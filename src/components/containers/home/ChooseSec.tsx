@@ -137,8 +137,8 @@ const ChooseSec = ({ data }: ChooseSecProps) => {
                   data-aos-duration="600"
                   data-aos-delay="100"
                 >
-                  <Link href="get-quote" aria-label="get proposal">
-                    <i className="icon-arrow-right"></i>Get Proposal
+                  <Link href="get-quote" aria-label="free trail">
+                    <i className="icon-arrow-right"></i> Free Trial
                   </Link>
                 </div>
               </div>
