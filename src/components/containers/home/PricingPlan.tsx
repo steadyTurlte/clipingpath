@@ -20,7 +20,7 @@ interface PricingPlanProps {
 const PricingPlan = ({ data }: PricingPlanProps) => {
   const pricingData = {
     ...data,
-    plans: data.plans,
+    plans: data?.plans,
   };
   return (
     <section className="section pricing-section">
